@@ -1,5 +1,4 @@
-require('dotenv').config()
-const API_URL = process.env.API_URL;
+const API_URL = "http://127.0.0.1:3000";
 let aiSuggestionCount =
   parseInt(localStorage.getItem("aiSuggestionCount")) || 0;
 
