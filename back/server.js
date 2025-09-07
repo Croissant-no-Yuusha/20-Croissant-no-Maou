@@ -106,7 +106,6 @@ app.post("/recipes", (req, res) => {
 app.get("/recipes", (req, res) => {
   try {
     const recipes = readRecipes();
-    // Sort by created_at descending (newest first)
     recipes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     res.json(recipes);
   } catch (error) {
@@ -331,19 +330,12 @@ text: `คุณคือผู้ช่วยทำอาหารที่เ�
   }
 });
 
-// ======================
-// 🏠 Serve static files
-// ======================
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ======================
-// 🚀 Start server
-// ======================
 const PORT = 3000;
 
-// Initialize recipes file on startup
 initializeRecipesFile();
 
 app.listen(PORT, () => {
