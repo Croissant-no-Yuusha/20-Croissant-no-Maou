@@ -7,7 +7,7 @@ require('dotenv').config()
 const app = express();
 
 app.use(express.json());
-app.use(express.static('public')); 
+app.use(express.static(path.join(__dirname, '../front')));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
