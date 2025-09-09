@@ -21,28 +21,6 @@ const MODEL = process.env.MODEL;
 
 const RECIPES_FILE = path.join(__dirname, 'recipes.json');
 
-function initializeRecipesFile() {
-  if (!fs.existsSync(RECIPES_FILE)) {
-    const initialData = [
-      {
-        id: 1,
-        title: "Fried Rice",
-        instructions: "1. Heat oil in a large pan or wok\n2. Add minced garlic and stir-fry for 30 seconds\n3. Add cooked rice and break up any clumps\n4. Stir-fry for 3-4 minutes\n5. Add soy sauce and mix well\n6. Serve hot",
-        ingredients: "rice, garlic, oil, soy sauce",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        title: "Tomato Pasta",
-        instructions: "1. Boil pasta according to package directions\n2. Heat olive oil in a pan\n3. Add minced garlic and cook until fragrant\n4. Add diced tomatoes and cook for 5 minutes\n5. Mix cooked pasta with tomato sauce\n6. Top with grated cheese and serve",
-        ingredients: "pasta, tomatoes, garlic, olive oil, cheese",
-        created_at: new Date().toISOString()
-      }
-    ];
-    fs.writeFileSync(RECIPES_FILE, JSON.stringify(initialData, null, 2));
-    console.log("✅ Initialized recipes.json file");
-  }
-}
 
 function readRecipes() {
   try {
@@ -207,7 +185,7 @@ app.post("/ai-suggest", async (req, res) => {
     });
   }
 
-  if (!API_KEY || API_KEY === 'your-api-key-here') {
+  if (!API_KEY) {
     return res.status(500).json({ 
       error: "API key not configured",
       suggestion: "Please configure your Google Gemini API key in the environment variables."
@@ -338,7 +316,6 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT;
 
-initializeRecipesFile();
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
