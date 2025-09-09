@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:3000";
+const API_URL = "http://localhost:3039";
 let aiSuggestionCount =
   parseInt(localStorage.getItem("aiSuggestionCount")) || 0;
 
