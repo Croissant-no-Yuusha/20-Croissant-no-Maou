@@ -1,22 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> AI Recipe Manager</title>
+  <title>📋 AI Recipe Manager</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-  <div class="header">
-  <h1 class="header-title">
-    <span class="emoji">🤖</span>
-    <span class="gradient-text">AI Recipe Manager</span>
-    <span class="emoji">🍳</span>
-  </h1>
-    <p class="subtitle">Discover delicious recipes with AI assistance</p>
-  </div>
+    <div class="header">
+      <img class="header-picture" src="">
+      <h1 class="recipe-manager"><img src="photos/book.png" alt="icon" class="icon">AI Recipe Manager</h1>
+      <p class="discover">Discover delicious recipes with AI assistance</p>
+    </div>
 
     <div class="stats">
       <div class="stat-item">
@@ -29,22 +25,22 @@
       </div>
     </div>
 
-    <div class="card ai-section">
+    <div class="card-ai-section">
       <h2 class="section-title">
-        🥘 AI Recipe Generator
+        <img src="photos/light-bulb.png" alt="icon" class="icon"> AI Recipe Generator
       </h2>
       <div class="form-group">
         <label for="ingredients">What ingredients do you have?</label>
         <input type="text" id="ingredients" placeholder="e.g., chicken, tomatoes, onions, garlic" />
       </div>
-      <button class="btn" id="generateBtn">🎲 Generate Recipe</button>
+      <button class="btn" id="generateBtn"><img src="photos/gearwithcircle.png" alt="icon" class="icon-btn"> Generate Recipe</button>
       
       <div id="aiOutput" class="ai-output" style="display: none;"></div>
     </div>
 
-    <div class="card">
+    <div class="add-new-recipe-card">
       <h2 class="section-title">
-        📝 <span id="formTitle">Add New Recipe</span>
+        <img src="photos/blue-recipe.png" alt="icon" class="icon"><span id="formTitle">Add New Recipe</span>
       </h2>
       <form id="recipeForm">
         <input type="hidden" id="recipeId">
@@ -64,15 +60,19 @@
           <textarea id="instructions" placeholder="Enter step-by-step cooking instructions" required></textarea>
         </div>
         
-        <button type="submit" class="btn" id="saveBtn">💾 Save Recipe</button>
+        <button type="submit" class="btn" id="saveBtn"><img src="photos/download.png" alt="icon" class="icon-btn"> Save Recipe</button>
         <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">❌ Cancel</button>
       </form>
     </div>
 
-    <div class="card">
+    <div class="my-recipe-collection-card">
       <h2 class="section-title">
-        📚 My Recipe Collection
+        <img src="photos/3folders.png" alt="icon" class="icon">My Recipe Collection
       </h2>
+      <!-- Search box -->
+      <div class="form-group">
+        <input type="text" id="searchRecipes" placeholder="🔍 Search recipes by title or ingredients...">
+      </div>
       <div id="recipesList">
         <div class="empty-state">
           <h3>No recipes yet</h3>
@@ -81,7 +81,7 @@
       </div>
     </div>
   </div>
-</div>
+
   <script src="script.js"></script>
 </body>
 </html>
