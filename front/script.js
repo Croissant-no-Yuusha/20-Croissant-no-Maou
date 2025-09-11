@@ -75,6 +75,11 @@ const themeManager = {
         element.placeholder = translations[key];
       }
     });
+
+    // Reload recipes to update dynamic content with new language
+    if (typeof loadRecipes === 'function') {
+      loadRecipes();
+    }
   },
 
   getTranslations(lang) {
@@ -265,9 +270,11 @@ function updateStats() {
   let noResults = list.querySelector(".no-results");
   if (!anyMatch) {
     if (!noResults) {
+      const lang = localStorage.getItem('language') || 'en';
+      const translations = themeManager.getTranslations(lang);
       const div = document.createElement("div");
       div.className = "empty-state no-results";
-      div.innerHTML = `<h3>No recipes found</h3><p>Try another search term.</p>`;
+      div.innerHTML = `<h3>${translations.no_results_found || 'No recipes found'}</h3><p>${translations.try_different_search || 'Try another search term.'}</p>`;
       list.appendChild(div);
     }
   } else if (noResults) {
@@ -287,10 +294,12 @@ function updateStats() {
         document.getElementById('totalRecipes').textContent = recipes.length;
         
         if (recipes.length === 0) {
+          const lang = localStorage.getItem('language') || 'en';
+          const translations = themeManager.getTranslations(lang);
           list.innerHTML = `
             <div class="empty-state">
-              <h3>No recipes yet</h3>
-              <p>Generate your first recipe with AI or add one manually!</p>
+              <h3>${translations.no_recipes || 'No recipes yet'}</h3>
+              <p>${translations.no_recipes_desc || 'Generate your first recipe with AI or add one manually!'}</p>
             </div>
           `;
           return;
@@ -308,6 +317,10 @@ function updateStats() {
           const isUpdated = recipe.updated_at !== recipe.created_at;
           const updatedDate = isUpdated ? new Date(recipe.updated_at).toLocaleDateString() : null;
           
+          // Get current language translations
+          const lang = localStorage.getItem('language') || 'en';
+          const translations = themeManager.getTranslations(lang);
+          
           // Truncate instructions for card view
           const truncatedInstructions = recipe.instructions.length > 150 
             ? recipe.instructions.substring(0, 150) + '...' 
@@ -319,20 +332,20 @@ function updateStats() {
             </div>
             ${recipe.ingredients ? `
               <div class="recipe-ingredients">
-                <strong>🥘 Ingredients:</strong> ${recipe.ingredients}
+                <strong>🥘 ${translations.ingredients || 'Ingredients'}:</strong> ${recipe.ingredients}
               </div>
             ` : ''}
             <div class="recipe-instructions">${truncatedInstructions.replace(/\n/g, '<br>')}</div>
             <div class="recipe-meta">
-              📅 Created: ${createdDate}
-              ${isUpdated ? `• Updated: ${updatedDate}` : ''}
+              📅 ${translations.created || 'Created'}: ${createdDate}
+              ${isUpdated ? `• ${translations.updated || 'Updated'}: ${updatedDate}` : ''}
             </div>
             <div class="recipe-buttons">
-              <button class="btn btn-secondary btn-small" onclick="editRecipe(${recipe.id})" title="Edit Recipe">
-                ✏️ Edit
+              <button class="btn btn-secondary btn-small" onclick="editRecipe(${recipe.id})" title="${translations.edit_recipe_button || 'Edit Recipe'}">
+                ✏️ ${translations.edit || 'Edit'}
               </button>
-              <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})" title="Delete Recipe">
-                🗑️ Delete
+              <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})" title="${translations.delete_recipe_button || 'Delete Recipe'}">
+                🗑️ ${translations.delete || 'Delete'}
               </button>
             </div>
           `;
@@ -362,10 +375,12 @@ function updateStats() {
         list.appendChild(recipesGrid);
       } catch (error) {
         console.error('Error loading recipes:', error);
+        const lang = localStorage.getItem('language') || 'en';
+        const translations = themeManager.getTranslations(lang);
         document.getElementById("recipesList").innerHTML = `
           <div class="empty-state">
-            <h3>Error loading recipes</h3>
-            <p>Please check your connection and try again.</p>
+            <h3>${translations.error_loading_recipes || 'Error loading recipes'}</h3>
+            <p>${translations.connection_error || 'Please check your connection and try again.'}</p>
           </div>
         `;
       }
@@ -409,7 +424,9 @@ function updateStats() {
         document.getElementById("instructions").value = "";
         document.getElementById("recipeIngredients").value = "";
         
-        document.getElementById("formTitle").textContent = "Add New Recipe";
+        const langReset = localStorage.getItem('language') || 'en';
+        const transReset = themeManager.getTranslations(langReset);
+        document.getElementById("formTitle").textContent = transReset.add_new_recipe || "Add New Recipe";
         document.getElementById("cancelBtn").style.display = "none";
         
         await loadRecipes();
@@ -440,7 +457,10 @@ function updateStats() {
       document.getElementById("title").value = "";
       document.getElementById("instructions").value = "";
       document.getElementById("recipeIngredients").value = "";
-      document.getElementById("formTitle").textContent = "Add New Recipe";
+      
+      const lang = localStorage.getItem('language') || 'en';
+      const translations = themeManager.getTranslations(lang);
+      document.getElementById("formTitle").textContent = translations.add_new_recipe || "Add New Recipe";
       document.getElementById("cancelBtn").style.display = "none";
     });
 
@@ -455,7 +475,10 @@ function updateStats() {
         document.getElementById("title").value = recipe.title;
         document.getElementById("instructions").value = recipe.instructions;
         document.getElementById("recipeIngredients").value = recipe.ingredients || "";
-        document.getElementById("formTitle").textContent = "Edit Recipe";
+        
+        const lang = localStorage.getItem('language') || 'en';
+        const translations = themeManager.getTranslations(lang);
+        document.getElementById("formTitle").textContent = translations.edit_recipe || "Edit Recipe";
         document.getElementById("cancelBtn").style.display = "inline-block";
         
         document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
@@ -632,7 +655,10 @@ function updateStats() {
     document.getElementById("title").value = title;
     document.getElementById("instructions").value = instructions;
     document.getElementById("recipeIngredients").value = parsedIngredients;
-    document.getElementById("formTitle").textContent = "Save AI Recipe";
+    
+    const langForm = localStorage.getItem('language') || 'en';
+    const transForm = themeManager.getTranslations(langForm);
+    document.getElementById("formTitle").textContent = transForm.save_ai_recipe || "Save AI Recipe";
 
     // Highlight the form
     document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
@@ -678,7 +704,10 @@ function updateStats() {
       document.getElementById("title").value = title;
       document.getElementById("instructions").value = instructions;
       document.getElementById("recipeIngredients").value = originalIngredients;
-      document.getElementById("formTitle").textContent = "Save AI Recipe";
+      
+      const lang = localStorage.getItem('language') || 'en';
+      const translations = themeManager.getTranslations(lang);
+      document.getElementById("formTitle").textContent = translations.save_ai_recipe || "Save AI Recipe";
       
       document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
       
