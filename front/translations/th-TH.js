@@ -7,6 +7,7 @@ const translations_th = {
   // Stats
   total_recipes: "สูตรอาหารทั้งหมด",
   ai_suggestions: "คำแนะนำจาก AI",
+  ai_recipes: "สูตรอาหาร AI",
   
   // AI Generator Section
   ai_generator: "เครื่องสร้างสูตรอาหาร AI",

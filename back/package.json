@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "node migrate-to-mongodb.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,8 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "openai": "^5.19.1"
+    "openai": "^5.19.1",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.0"
   }
 }

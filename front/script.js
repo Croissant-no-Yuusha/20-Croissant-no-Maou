@@ -159,6 +159,11 @@ const modalManager = {
           <div class="modal-meta">
             <p><strong>${translations.created || 'Created'}:</strong> ${createdDate}</p>
             ${isUpdated ? `<p><strong>${translations.updated || 'Updated'}:</strong> ${updatedDate}</p>` : ''}
+            ${recipe.is_ai_generated ? `<p><strong>🤖 ${translations.source || 'Source'}:</strong> AI Generated (${recipe.source || 'ai_gemini'})</p>` : ''}
+            ${recipe.difficulty ? `<p><strong>📊 ${translations.difficulty || 'Difficulty'}:</strong> ${recipe.difficulty}</p>` : ''}
+            ${recipe.prep_time || recipe.cook_time ? `<p><strong>⏱️ ${translations.time || 'Time'}:</strong> ${recipe.prep_time || 0}min prep, ${recipe.cook_time || 0}min cook</p>` : ''}
+            ${recipe.servings ? `<p><strong>👥 ${translations.servings || 'Servings'}:</strong> ${recipe.servings}</p>` : ''}
+            ${recipe.tags && recipe.tags.length > 0 ? `<p><strong>🏷️ ${translations.tags || 'Tags'}:</strong> ${recipe.tags.join(', ')}</p>` : ''}
           </div>
         </div>
       </div>
@@ -240,7 +245,8 @@ const notificationManager = {
 };
 
 function updateStats() {
-  document.getElementById('aiSuggestions').textContent = aiSuggestionCount;
+  // Stats are now updated by loadRecipes() function
+  // This function kept for compatibility but loadRecipes() handles the counts
 }
 
     const searchInput = document.getElementById("searchRecipes");
@@ -291,7 +297,12 @@ function updateStats() {
         const recipes = await res.json();
         const list = document.getElementById("recipesList");
         
+        // Update counters
         document.getElementById('totalRecipes').textContent = recipes.length;
+        
+        // Count AI-generated recipes
+        const aiRecipes = recipes.filter(recipe => recipe.is_ai_generated).length;
+        document.getElementById('aiSuggestions').textContent = aiRecipes;
         
         if (recipes.length === 0) {
           const lang = localStorage.getItem('language') || 'en';
@@ -329,6 +340,7 @@ function updateStats() {
           recipeCard.innerHTML = `
             <div class="recipe-title">
               🍽️ ${recipe.title}
+              ${recipe.is_ai_generated ? '<span class="ai-badge">🤖 AI</span>' : ''}
             </div>
             ${recipe.ingredients ? `
               <div class="recipe-ingredients">
@@ -411,10 +423,25 @@ function updateStats() {
         const url = id ? `${API_URL}/recipes/${id}` : `${API_URL}/recipes`;
         const method = id ? "PUT" : "POST";
 
+        // Check if this is an AI-generated recipe (based on form title)
+        const formTitle = document.getElementById("formTitle").textContent;
+        const isAiGenerated = formTitle.includes("AI") || formTitle.includes("ai");
+        
+        const requestBody = { 
+          title, 
+          instructions, 
+          ingredients,
+          ...(isAiGenerated && {
+            is_ai_generated: true,
+            source: 'ai_gemini',
+            tags: ['ai-generated']
+          })
+        };
+
         const res = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, instructions, ingredients })
+          body: JSON.stringify(requestBody)
         });
 
         if (!res.ok) throw new Error('Failed to save recipe');
@@ -666,10 +693,7 @@ function updateStats() {
     formCard.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
     setTimeout(() => formCard.style.boxShadow = '', 2000);
 
-    // Increment stats
-    aiSuggestionCount++;
-    localStorage.setItem('aiSuggestionCount', aiSuggestionCount.toString());
-    updateStats();
+    // Stats will be updated when recipes are loaded from database
 
   } catch (error) {
     console.error("AI generation error:", error);

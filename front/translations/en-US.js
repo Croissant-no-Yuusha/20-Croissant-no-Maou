@@ -7,6 +7,7 @@ const translations_en = {
   // Stats
   total_recipes: "Total Recipes",
   ai_suggestions: "AI Suggestions",
+  ai_recipes: "AI Recipes",
   
   // AI Generator Section
   ai_generator: "AI Recipe Generator",

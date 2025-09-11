@@ -53,7 +53,18 @@ function getNextId(recipes) {
 // Create recipe
 app.post("/recipes", (req, res) => {
   try {
-    const { title, instructions, ingredients } = req.body;
+    const { 
+      title, 
+      instructions, 
+      ingredients, 
+      is_ai_generated = false,
+      source = 'manual',
+      tags = [],
+      difficulty = 'easy',
+      prep_time = 0,
+      cook_time = 0,
+      servings = 1
+    } = req.body;
     
     if (!title || !instructions) {
       return res.status(400).json({ error: "Title and instructions are required" });
@@ -66,7 +77,14 @@ app.post("/recipes", (req, res) => {
       instructions: instructions.trim(),
       ingredients: ingredients ? ingredients.trim() : "",
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      is_ai_generated: Boolean(is_ai_generated),
+      source: source.trim(),
+      tags: Array.isArray(tags) ? tags : [],
+      difficulty: difficulty.trim(),
+      prep_time: Number(prep_time) || 0,
+      cook_time: Number(cook_time) || 0,
+      servings: Number(servings) || 1
     };
 
     recipes.push(recipe);
@@ -116,7 +134,16 @@ app.get("/recipes/:id", (req, res) => {
 app.put("/recipes/:id", (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { title, instructions, ingredients } = req.body;
+    const { 
+      title, 
+      instructions, 
+      ingredients,
+      tags,
+      difficulty,
+      prep_time,
+      cook_time,
+      servings
+    } = req.body;
     
     if (!title || !instructions) {
       return res.status(400).json({ error: "Title and instructions are required" });
@@ -134,7 +161,13 @@ app.put("/recipes/:id", (req, res) => {
       title: title.trim(),
       instructions: instructions.trim(),
       ingredients: ingredients ? ingredients.trim() : "",
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      // Update optional fields if provided
+      ...(tags !== undefined && { tags: Array.isArray(tags) ? tags : [] }),
+      ...(difficulty !== undefined && { difficulty: difficulty.trim() }),
+      ...(prep_time !== undefined && { prep_time: Number(prep_time) || 0 }),
+      ...(cook_time !== undefined && { cook_time: Number(cook_time) || 0 }),
+      ...(servings !== undefined && { servings: Number(servings) || 1 })
     };
 
     if (writeRecipes(recipes)) {
@@ -277,7 +310,14 @@ text: `คุณคือผู้ช่วยทำอาหารที่เ�
           }
 
           console.log("Recipe suggestion generated successfully");
-          res.json({ suggestion });
+          res.json({ 
+            suggestion,
+            metadata: {
+              is_ai_generated: true,
+              source: 'ai_gemini',
+              generated_at: new Date().toISOString()
+            }
+          });
 
         } catch (parseError) {
           console.error("JSON parse error:", parseError);
