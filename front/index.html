@@ -1,88 +1,149 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>📋 AI Recipe Manager</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Theme Toggle & Language Switcher -->
+  <div class="top-controls">
+    <div class="theme-toggle">
+      <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+    <div class="language-switcher">
+      <select id="languageSelect" class="language-select">
+        <option value="en">🇺🇸 English</option>
+        <option value="th">🇹🇭 ไทย</option>
+      </select>
+    </div>
+  </div>
+
   <div class="container">
     <div class="header">
-      <img class="header-picture" src="">
-      <h1 class="recipe-manager"><img src="photos/book.png" alt="icon" class="icon">AI Recipe Manager</h1>
-      <p class="discover">Discover delicious recipes with AI assistance</p>
+      <div class="header-content">
+        <h1 class="recipe-manager">
+          <img src="photos/book.png" alt="icon" class="icon" loading="lazy">
+          <span data-translate="title">AI Recipe Manager</span>
+        </h1>
+        <p class="discover" data-translate="subtitle">Discover delicious recipes with AI assistance</p>
+      </div>
     </div>
 
     <div class="stats">
       <div class="stat-item">
         <span class="stat-number" id="totalRecipes">0</span>
-        <span class="stat-label">Total Recipes</span>
+        <span class="stat-label" data-translate="total_recipes">Total Recipes</span>
       </div>
       <div class="stat-item">
         <span class="stat-number" id="aiSuggestions">0</span>
-        <span class="stat-label">AI Suggestions</span>
+        <span class="stat-label" data-translate="ai_suggestions">AI Suggestions</span>
       </div>
     </div>
 
     <div class="card-ai-section">
       <h2 class="section-title">
-        <img src="photos/light-bulb.png" alt="icon" class="icon"> AI Recipe Generator
+        <img src="photos/light-bulb.png" alt="icon" class="icon" loading="lazy">
+        <span data-translate="ai_generator">AI Recipe Generator</span>
       </h2>
       <div class="form-group">
-        <label for="ingredients">What ingredients do you have?</label>
-        <input type="text" id="ingredients" placeholder="e.g., chicken, tomatoes, onions, garlic" />
+        <label for="ingredients" data-translate="ingredients_label">What ingredients do you have?</label>
+        <input type="text" id="ingredients" data-translate-placeholder="ingredients_placeholder" placeholder="e.g., chicken, tomatoes, onions, garlic" />
       </div>
-      <button class="btn" id="generateBtn"><img src="photos/gearwithcircle.png" alt="icon" class="icon-btn"> Generate Recipe</button>
+      <button class="btn btn-primary" id="generateBtn">
+        <img src="photos/gearwithcircle.png" alt="icon" class="icon-btn" loading="lazy">
+        <span data-translate="generate_recipe">Generate Recipe</span>
+      </button>
       
       <div id="aiOutput" class="ai-output" style="display: none;"></div>
     </div>
 
     <div class="add-new-recipe-card">
       <h2 class="section-title">
-        <img src="photos/blue-recipe.png" alt="icon" class="icon"><span id="formTitle">Add New Recipe</span>
+        <img src="photos/blue-recipe.png" alt="icon" class="icon" loading="lazy">
+        <span id="formTitle" data-translate="add_new_recipe">Add New Recipe</span>
       </h2>
       <form id="recipeForm">
         <input type="hidden" id="recipeId">
         
         <div class="form-group">
-          <label for="title">Recipe Title</label>
-          <input type="text" id="title" placeholder="Enter recipe title" required>
+          <label for="title" data-translate="recipe_title">Recipe Title</label>
+          <input type="text" id="title" data-translate-placeholder="recipe_title_placeholder" placeholder="Enter recipe title" required>
         </div>
         
         <div class="form-group">
-          <label for="recipeIngredients">Ingredients</label>
-          <input type="text" id="recipeIngredients" placeholder="e.g., 2 cups rice, 1 onion, 3 cloves garlic">
+          <label for="recipeIngredients" data-translate="ingredients">Ingredients</label>
+          <input type="text" id="recipeIngredients" data-translate-placeholder="ingredients_example" placeholder="e.g., 2 cups rice, 1 onion, 3 cloves garlic">
         </div>
         
         <div class="form-group">
-          <label for="instructions">Instructions</label>
-          <textarea id="instructions" placeholder="Enter step-by-step cooking instructions" required></textarea>
+          <label for="instructions" data-translate="instructions">Instructions</label>
+          <textarea id="instructions" data-translate-placeholder="instructions_placeholder" placeholder="Enter step-by-step cooking instructions" required></textarea>
         </div>
         
-        <button type="submit" class="btn" id="saveBtn"><img src="photos/download.png" alt="icon" class="icon-btn"> Save Recipe</button>
-        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">❌ Cancel</button>
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            <img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy">
+            <span data-translate="save_recipe">Save Recipe</span>
+          </button>
+          <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+            <span data-translate="cancel">Cancel</span>
+          </button>
+        </div>
       </form>
     </div>
 
     <div class="my-recipe-collection-card">
       <h2 class="section-title">
-        <img src="photos/3folders.png" alt="icon" class="icon">My Recipe Collection
+        <img src="photos/3folders.png" alt="icon" class="icon" loading="lazy">
+        <span data-translate="recipe_collection">My Recipe Collection</span>
       </h2>
       <!-- Search box -->
       <div class="form-group">
-        <input type="text" id="searchRecipes" placeholder="🔍 Search recipes by title or ingredients...">
+        <div class="search-container">
+          <input type="text" id="searchRecipes" data-translate-placeholder="search_placeholder" placeholder="🔍 Search recipes by title or ingredients...">
+          <span class="search-icon">🔍</span>
+        </div>
       </div>
       <div id="recipesList">
         <div class="empty-state">
-          <h3>No recipes yet</h3>
-          <p>Generate your first recipe with AI or add one manually!</p>
+          <h3 data-translate="no_recipes">No recipes yet</h3>
+          <p data-translate="no_recipes_desc">Generate your first recipe with AI or add one manually!</p>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Recipe Modal -->
+  <div id="recipeModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle" data-translate="recipe_details">Recipe Details</h2>
+        <button class="modal-close" id="closeModal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalRecipeContent">
+          <!-- Recipe content will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modalEditBtn" data-translate="edit">Edit</button>
+        <button class="btn btn-danger" id="modalDeleteBtn" data-translate="delete">Delete</button>
+        <button class="btn btn-ghost" id="modalCloseBtn" data-translate="close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translation Files -->
+  <script src="translations/en-US.js"></script>
+  <script src="translations/th-TH.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,9 +1,242 @@
-    const API_URL = "http://127.0.0.1:3000";
-    let aiSuggestionCount = parseInt(localStorage.getItem('aiSuggestionCount')) || 0;
+    const API_URL = "http://localhost:3039";
+let aiSuggestionCount = parseInt(localStorage.getItem('aiSuggestionCount')) || 0;
 
-    function updateStats() {
-      document.getElementById('aiSuggestions').textContent = aiSuggestionCount;
+// Theme and Language Management
+const themeManager = {
+  init() {
+    this.setupThemeToggle();
+    this.setupLanguageSwitcher();
+    this.loadSavedTheme();
+    this.loadSavedLanguage();
+  },
+
+  setupThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => this.toggleTheme());
+  },
+
+  setupLanguageSwitcher() {
+    const languageSelect = document.getElementById('languageSelect');
+    languageSelect.addEventListener('change', (e) => this.changeLanguage(e.target.value));
+  },
+
+  toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Update theme toggle icon
+    const themeIcon = document.querySelector('.theme-icon');
+    themeIcon.textContent = newTheme === 'light' ? '🌙' : '☀️';
+    
+    // Add transition effect
+    document.body.style.transition = 'all 0.3s ease';
+    setTimeout(() => {
+      document.body.style.transition = '';
+    }, 300);
+  },
+
+  loadSavedTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeIcon = document.querySelector('.theme-icon');
+    themeIcon.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+  },
+
+  changeLanguage(lang) {
+    localStorage.setItem('language', lang);
+    this.updateTexts(lang);
+  },
+
+  loadSavedLanguage() {
+    const savedLang = localStorage.getItem('language') || 'en';
+    document.getElementById('languageSelect').value = savedLang;
+    this.updateTexts(savedLang);
+  },
+
+  updateTexts(lang) {
+    const translations = this.getTranslations(lang);
+    
+    // Update all elements with data-translate attribute
+    document.querySelectorAll('[data-translate]').forEach(element => {
+      const key = element.getAttribute('data-translate');
+      if (translations[key]) {
+        element.textContent = translations[key];
+      }
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+      const key = element.getAttribute('data-translate-placeholder');
+      if (translations[key]) {
+        element.placeholder = translations[key];
+      }
+    });
+  },
+
+  getTranslations(lang) {
+    // Use external translation files
+    switch(lang) {
+      case 'th':
+        return typeof translations_th !== 'undefined' ? translations_th : {};
+      case 'en':
+      default:
+        return typeof translations_en !== 'undefined' ? translations_en : {};
     }
+  }
+};
+
+// Modal Management
+const modalManager = {
+  init() {
+    this.setupModal();
+  },
+
+  setupModal() {
+    const modal = document.getElementById('recipeModal');
+    const closeBtn = document.getElementById('closeModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    // Close modal events
+    closeBtn.addEventListener('click', () => this.closeModal());
+    modalCloseBtn.addEventListener('click', () => this.closeModal());
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+        this.closeModal();
+      }
+    });
+  },
+
+  showModal(recipe) {
+    const modal = document.getElementById('recipeModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalRecipeContent');
+    const editBtn = document.getElementById('modalEditBtn');
+    const deleteBtn = document.getElementById('modalDeleteBtn');
+
+    modalTitle.textContent = recipe.title;
+    
+    const createdDate = new Date(recipe.created_at).toLocaleDateString();
+    const isUpdated = recipe.updated_at !== recipe.created_at;
+    const updatedDate = isUpdated ? new Date(recipe.updated_at).toLocaleDateString() : null;
+
+    const lang = localStorage.getItem('language') || 'en';
+    const translations = this.getTranslations(lang);
+    
+    modalContent.innerHTML = `
+      <div class="modal-recipe-content">
+        ${recipe.ingredients ? `
+          <div class="modal-section">
+            <h4>🥘 ${translations.ingredients || 'Ingredients'}</h4>
+            <div class="modal-ingredients">${recipe.ingredients}</div>
+          </div>
+        ` : ''}
+        
+        <div class="modal-section">
+          <h4>📝 ${translations.instructions || 'Instructions'}</h4>
+          <div class="modal-instructions">${recipe.instructions.replace(/\n/g, '<br>')}</div>
+        </div>
+        
+        <div class="modal-section">
+          <h4>📅 ${translations.recipe_info || 'Recipe Information'}</h4>
+          <div class="modal-meta">
+            <p><strong>${translations.created || 'Created'}:</strong> ${createdDate}</p>
+            ${isUpdated ? `<p><strong>${translations.updated || 'Updated'}:</strong> ${updatedDate}</p>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Set up action buttons
+    editBtn.onclick = () => {
+      this.closeModal();
+      editRecipe(recipe.id);
+    };
+    
+    deleteBtn.onclick = () => {
+      this.closeModal();
+      deleteRecipe(recipe.id);
+    };
+
+    // Show modal with animation
+    modal.style.display = 'flex';
+    setTimeout(() => {
+      modal.classList.add('show');
+    }, 10);
+
+    // Focus management for accessibility
+    document.getElementById('closeModal').focus();
+  },
+
+  closeModal() {
+    const modal = document.getElementById('recipeModal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  },
+
+  getTranslations(lang) {
+    // Use external translation files
+    switch(lang) {
+      case 'th':
+        return typeof translations_th !== 'undefined' ? translations_th : {};
+      case 'en':
+      default:
+        return typeof translations_en !== 'undefined' ? translations_en : {};
+    }
+  }
+};
+
+// Notification System
+const notificationManager = {
+  show(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+      <span>${message}</span>
+      <button class="notification-close">&times;</button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => this.remove(notification), 5000);
+
+    // Manual close
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+      this.remove(notification);
+    });
+  },
+
+  remove(notification) {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }
+};
+
+function updateStats() {
+  document.getElementById('aiSuggestions').textContent = aiSuggestionCount;
+}
 
     const searchInput = document.getElementById("searchRecipes");
 
@@ -66,13 +299,19 @@
         const recipesGrid = document.createElement('div');
         recipesGrid.className = 'recipes-grid';
 
-        recipes.forEach(recipe => {
+        recipes.forEach((recipe, index) => {
           const recipeCard = document.createElement("div");
           recipeCard.className = "recipe-card fade-in";
+          recipeCard.style.animationDelay = `${index * 0.08}s`;
           
           const createdDate = new Date(recipe.created_at).toLocaleDateString();
           const isUpdated = recipe.updated_at !== recipe.created_at;
           const updatedDate = isUpdated ? new Date(recipe.updated_at).toLocaleDateString() : null;
+          
+          // Truncate instructions for card view
+          const truncatedInstructions = recipe.instructions.length > 150 
+            ? recipe.instructions.substring(0, 150) + '...' 
+            : recipe.instructions;
           
           recipeCard.innerHTML = `
             <div class="recipe-title">
@@ -80,19 +319,42 @@
             </div>
             ${recipe.ingredients ? `
               <div class="recipe-ingredients">
-                <strong>Ingredients:</strong> ${recipe.ingredients}
+                <strong>🥘 Ingredients:</strong> ${recipe.ingredients}
               </div>
             ` : ''}
-            <div class="recipe-instructions">${recipe.instructions.replace(/\n/g, '<br>')}</div>
+            <div class="recipe-instructions">${truncatedInstructions.replace(/\n/g, '<br>')}</div>
             <div class="recipe-meta">
-              Created: ${createdDate}
+              📅 Created: ${createdDate}
               ${isUpdated ? `• Updated: ${updatedDate}` : ''}
             </div>
             <div class="recipe-buttons">
-              <button class="btn btn-secondary btn-small" onclick="editRecipe(${recipe.id})">✏️ Edit</button>
-              <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})">🗑️ Delete</button>
+              <button class="btn btn-secondary btn-small" onclick="editRecipe(${recipe.id})" title="Edit Recipe">
+                ✏️ Edit
+              </button>
+              <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})" title="Delete Recipe">
+                🗑️ Delete
+              </button>
             </div>
           `;
+
+          // Add click event to show modal (except when clicking buttons)
+          recipeCard.addEventListener('click', (e) => {
+            if (!e.target.closest('.recipe-buttons')) {
+              modalManager.showModal(recipe);
+            }
+          });
+
+          // Add hover effect
+          recipeCard.addEventListener('mouseenter', () => {
+            recipeCard.style.transform = 'translateY(-8px)';
+          });
+
+          recipeCard.addEventListener('mouseleave', () => {
+            if (!recipeCard.classList.contains('highlight')) {
+              recipeCard.style.transform = '';
+            }
+          });
+
           recipesGrid.appendChild(recipeCard);
         });
 
@@ -118,14 +380,17 @@
       const ingredients = document.getElementById("recipeIngredients").value.trim();
 
       if (!title || !instructions) {
-        alert("Please fill in both title and instructions");
+        const lang = localStorage.getItem('language') || 'en';
+        const trans = themeManager.getTranslations(lang);
+        notificationManager.show(trans.title_required || "Please fill in both title and instructions", 'warning');
         return;
       }
 
       try {
         const saveBtn = document.getElementById("saveBtn");
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = "Saving...";
+        const lang1 = localStorage.getItem('language') || 'en';
+        const trans1 = themeManager.getTranslations(lang1);
+        saveBtn.textContent = trans1.saving || "Saving...";
         saveBtn.disabled = true;
 
         const url = id ? `${API_URL}/recipes/${id}` : `${API_URL}/recipes`;
@@ -149,15 +414,23 @@
         
         await loadRecipes();
         
-        const successMsg = id ? "Recipe updated successfully!" : "Recipe saved successfully!";
-        alert(successMsg);
+        const lang2 = localStorage.getItem('language') || 'en';
+        const trans2 = themeManager.getTranslations(lang2);
+        const successMsg = id 
+          ? (trans2.recipe_updated_success || "Recipe updated successfully!")
+          : (trans2.recipe_saved_success || "Recipe saved successfully!");
+        notificationManager.show(successMsg, 'success');
 
       } catch (error) {
         console.error('Error saving recipe:', error);
-        alert('Failed to save recipe. Please try again.');
+        const lang3 = localStorage.getItem('language') || 'en';
+        const trans3 = themeManager.getTranslations(lang3);
+        notificationManager.show(trans3.recipe_save_failed || 'Failed to save recipe. Please try again.', 'error');
       } finally {
         const saveBtn = document.getElementById("saveBtn");
-        saveBtn.textContent = "💾 Save Recipe";
+        const lang4 = localStorage.getItem('language') || 'en';
+        const trans4 = themeManager.getTranslations(lang4);
+        saveBtn.innerHTML = `<img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy"><span>${trans4.save_recipe || "Save Recipe"}</span>`;
         saveBtn.disabled = false;
       }
     });
@@ -188,41 +461,118 @@
         document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
       } catch (error) {
         console.error('Error loading recipe for edit:', error);
-        alert('Failed to load recipe for editing.');
+        notificationManager.show('Failed to load recipe for editing.', 'error');
       }
     }
 
     async function deleteRecipe(id) {
-      if (!confirm("Are you sure you want to delete this recipe?")) return;
+      // Create custom confirmation modal
+      const confirmed = await showConfirmationModal();
+      if (!confirmed) return;
       
       try {
         const res = await fetch(`${API_URL}/recipes/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error('Failed to delete recipe');
         
         await loadRecipes();
-        alert('Recipe deleted successfully!');
+        const lang9 = localStorage.getItem('language') || 'en';
+        const trans9 = themeManager.getTranslations(lang9);
+        notificationManager.show(trans9.recipe_deleted_success || 'Recipe deleted successfully!', 'success');
       } catch (error) {
         console.error('Error deleting recipe:', error);
-        alert('Failed to delete recipe. Please try again.');
+        const lang10 = localStorage.getItem('language') || 'en';
+        const trans10 = themeManager.getTranslations(lang10);
+        notificationManager.show(trans10.recipe_delete_failed || 'Failed to delete recipe. Please try again.', 'error');
       }
+    }
+
+    // Custom confirmation modal
+    function showConfirmationModal(title, message) {
+      return new Promise((resolve) => {
+        const lang8 = localStorage.getItem('language') || 'en';
+        const trans8 = themeManager.getTranslations(lang8);
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal confirmation-modal';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>${trans8.delete_confirmation || title}</h2>
+            </div>
+            <div class="modal-body">
+              <p>${trans8.delete_warning || message}</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-danger confirm-btn">${trans8.delete || "Delete"}</button>
+              <button class="btn btn-secondary cancel-btn">${trans8.cancel || "Cancel"}</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const confirmBtn = modal.querySelector('.confirm-btn');
+        const cancelBtn = modal.querySelector('.cancel-btn');
+
+        const cleanup = () => {
+          modal.classList.remove('show');
+          setTimeout(() => {
+            if (modal.parentNode) {
+              modal.parentNode.removeChild(modal);
+            }
+          }, 300);
+        };
+
+        confirmBtn.addEventListener('click', () => {
+          cleanup();
+          resolve(true);
+        });
+
+        cancelBtn.addEventListener('click', () => {
+          cleanup();
+          resolve(false);
+        });
+
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            cleanup();
+            resolve(false);
+          }
+        });
+
+        // Show modal
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+
+        cancelBtn.focus();
+      });
     }
 
     document.getElementById("generateBtn").addEventListener("click", async () => {
   const ingredients = document.getElementById("ingredients").value.trim();
   if (!ingredients) {
-    alert("Please enter some ingredients");
+    const lang7 = localStorage.getItem('language') || 'en';
+    const trans7 = themeManager.getTranslations(lang7);
+    notificationManager.show(trans7.please_enter_ingredients || "Please enter some ingredients", 'warning');
     return;
   }
 
   const outputElement = document.getElementById("aiOutput");
   const generateBtn = document.getElementById("generateBtn");
 
-  outputElement.innerHTML = '<div class="loading">Generating your perfect recipe...</div>';
+  const lang6 = localStorage.getItem('language') || 'en';
+  const trans6 = themeManager.getTranslations(lang6);
+  outputElement.innerHTML = `<div class="loading">${trans6.generating_recipe || 'Generating your perfect recipe...'}</div>`;
   outputElement.style.display = "block";
-  outputElement.className = "ai-output";
+  outputElement.className = "ai-output show";
 
-  generateBtn.textContent = "Generating...";
+  const lang5 = localStorage.getItem('language') || 'en';
+  const trans5 = themeManager.getTranslations(lang5);
+  generateBtn.innerHTML = `<span>${trans5.generating || "Generating..."}</span>`;
   generateBtn.disabled = true;
+  generateBtn.classList.add('loading');
 
   try {
     const res = await fetch(`${API_URL}/ai-suggest`, {
@@ -236,9 +586,20 @@
     const data = await res.json();
     let suggestion = data.suggestion || "No recipe suggestion received from the server.";
 
-    // Show raw AI output
-    outputElement.innerHTML = suggestion;
-    outputElement.className = "ai-output has-content";
+    // Show raw AI output with better formatting
+    const lang8 = localStorage.getItem('language') || 'en';
+    const trans8 = themeManager.getTranslations(lang8);
+    outputElement.innerHTML = `
+      <div class="ai-recipe-result">
+        <div class="ai-suggestion-text">${suggestion}</div>
+        <div class="ai-actions" style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+          <button class="btn btn-primary btn-small" onclick="quickSaveRecipe(\`${suggestion.replace(/`/g, '\\`')}\`, \`${ingredients}\`)">
+            ${trans8.quick_save || 'Quick Save'}
+          </button>
+        </div>
+      </div>
+    `;
+    outputElement.className = "ai-output has-content show";
     outputElement.scrollIntoView({ behavior: 'smooth' });
 
     // --- Parse the structured recipe ---
@@ -289,8 +650,11 @@
     outputElement.innerHTML = `❌ Error: ${error.message}<br><br>Please check your connection and try again.`;
     outputElement.className = "ai-output";
   } finally {
-    generateBtn.textContent = "🎲 Generate Recipe";
+    const lang6 = localStorage.getItem('language') || 'en';
+    const trans6 = themeManager.getTranslations(lang6);
+    generateBtn.innerHTML = `<img src="photos/gearwithcircle.png" alt="icon" class="icon-btn" loading="lazy"><span>${trans6.generate_recipe || "Generate Recipe"}</span>`;
     generateBtn.disabled = false;
+    generateBtn.classList.remove('loading');
   }
 });
 
@@ -332,13 +696,73 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all managers
+      themeManager.init();
+      modalManager.init();
+      
+      // Load initial data
       loadRecipes();
       updateStats();
       
+      // Add smooth animations and interactions
       setTimeout(() => {
         document.querySelector('.container').style.opacity = '1';
       }, 100);
+
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + K for search focus
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          document.getElementById('searchRecipes').focus();
+        }
+        
+        // Ctrl/Cmd + N for new recipe
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+          e.preventDefault();
+          document.getElementById('title').focus();
+        }
+      });
+
+      // Add loading indicators for better UX
+      addLoadingStates();
+      
+      // Optimize images loading
+      lazyLoadImages();
     });
+
+    // Add loading states to forms and buttons
+    function addLoadingStates() {
+      const forms = document.querySelectorAll('form');
+      forms.forEach(form => {
+        form.addEventListener('submit', () => {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.classList.add('loading');
+          }
+        });
+      });
+    }
+
+    // Lazy load images for better performance
+    function lazyLoadImages() {
+      const images = document.querySelectorAll('img[loading="lazy"]');
+      
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src || img.src;
+              img.classList.remove('lazy');
+              observer.unobserve(img);
+            }
+          });
+        });
+
+        images.forEach(img => imageObserver.observe(img));
+      }
+    }
 
     window.editRecipe = editRecipe;
     window.deleteRecipe = deleteRecipe;
