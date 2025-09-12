@@ -1,35 +1,35 @@
-const fs = require("fs");
-const path = require("path");
-const mongoose = require("mongoose");
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose');
 
 // Base Storage class defining the interface
 class Storage {
   constructor() {
     if (this.constructor === Storage) {
       throw new Error(
-        "Storage is an abstract class and cannot be instantiated directly",
+        'Storage is an abstract class and cannot be instantiated directly'
       );
     }
   }
 
   async getAllRecipes() {
-    throw new Error("getAllRecipes() must be implemented by subclass");
+    throw new Error('getAllRecipes() must be implemented by subclass');
   }
 
   async getRecipeById(id) {
-    throw new Error("getRecipeById() must be implemented by subclass");
+    throw new Error('getRecipeById() must be implemented by subclass');
   }
 
   async createRecipe(recipeData) {
-    throw new Error("createRecipe() must be implemented by subclass");
+    throw new Error('createRecipe() must be implemented by subclass');
   }
 
   async updateRecipe(id, updateData) {
-    throw new Error("updateRecipe() must be implemented by subclass");
+    throw new Error('updateRecipe() must be implemented by subclass');
   }
 
   async deleteRecipe(id) {
-    throw new Error("deleteRecipe() must be implemented by subclass");
+    throw new Error('deleteRecipe() must be implemented by subclass');
   }
 }
 
@@ -54,7 +54,7 @@ class MongoDBStorage extends Storage {
       difficulty: recipe.difficulty,
       prep_time: recipe.prep_time,
       cook_time: recipe.cook_time,
-      servings: recipe.servings,
+      servings: recipe.servings
     };
   }
 
@@ -63,7 +63,7 @@ class MongoDBStorage extends Storage {
       const recipes = await this.Recipe.find({}).sort({ createdAt: -1 });
       return recipes.map((recipe) => this.#transformMongoToRecipe(recipe));
     } catch (error) {
-      console.error("MongoDB read error:", error);
+      console.error('MongoDB read error:', error);
       return [];
     }
   }
@@ -75,7 +75,7 @@ class MongoDBStorage extends Storage {
 
       return this.#transformMongoToRecipe(recipe);
     } catch (error) {
-      console.error("MongoDB findById error:", error);
+      console.error('MongoDB findById error:', error);
       return null;
     }
   }
@@ -98,10 +98,10 @@ class MongoDBStorage extends Storage {
         difficulty: saved.difficulty,
         prep_time: saved.prep_time,
         cook_time: saved.cook_time,
-        servings: saved.servings,
+        servings: saved.servings
       };
     } catch (error) {
-      console.error("MongoDB create error:", error);
+      console.error('MongoDB create error:', error);
       throw error;
     }
   }
@@ -111,7 +111,7 @@ class MongoDBStorage extends Storage {
       const updated = await this.Recipe.findByIdAndUpdate(
         id,
         { ...updateData, updatedAt: new Date() },
-        { new: true, runValidators: true },
+        { new: true, runValidators: true }
       );
 
       if (!updated) return null;
@@ -129,10 +129,10 @@ class MongoDBStorage extends Storage {
         difficulty: updated.difficulty,
         prep_time: updated.prep_time,
         cook_time: updated.cook_time,
-        servings: updated.servings,
+        servings: updated.servings
       };
     } catch (error) {
-      console.error("MongoDB update error:", error);
+      console.error('MongoDB update error:', error);
       throw error;
     }
   }
@@ -142,7 +142,7 @@ class MongoDBStorage extends Storage {
       const deleted = await this.Recipe.findByIdAndDelete(id);
       return deleted !== null;
     } catch (error) {
-      console.error("MongoDB delete error:", error);
+      console.error('MongoDB delete error:', error);
       throw error;
     }
   }
@@ -152,15 +152,15 @@ class MongoDBStorage extends Storage {
 class JSONStorage extends Storage {
   constructor(recipesFilePath) {
     super();
-    this.recipesFile = recipesFilePath || path.join(__dirname, "recipes.json");
+    this.recipesFile = recipesFilePath || path.join(__dirname, 'recipes.json');
   }
 
   #readRecipes() {
     try {
-      const data = fs.readFileSync(this.recipesFile, "utf8");
+      const data = fs.readFileSync(this.recipesFile, 'utf8');
       return JSON.parse(data);
     } catch (error) {
-      console.error("Error reading recipes:", error);
+      console.error('Error reading recipes:', error);
       return [];
     }
   }
@@ -170,7 +170,7 @@ class JSONStorage extends Storage {
       fs.writeFileSync(this.recipesFile, JSON.stringify(recipes, null, 2));
       return true;
     } catch (error) {
-      console.error("Error writing recipes:", error);
+      console.error('Error writing recipes:', error);
       return false;
     }
   }
@@ -194,14 +194,14 @@ class JSONStorage extends Storage {
       ...recipeData,
       id: this.#getNextId(recipes),
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
 
     recipes.push(recipe);
     if (this.#writeRecipes(recipes)) {
       return recipe;
     } else {
-      throw new Error("Failed to save recipe to JSON file");
+      throw new Error('Failed to save recipe to JSON file');
     }
   }
 
@@ -214,13 +214,13 @@ class JSONStorage extends Storage {
     recipes[recipeIndex] = {
       ...recipes[recipeIndex],
       ...updateData,
-      updated_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
 
     if (this.#writeRecipes(recipes)) {
       return recipes[recipeIndex];
     } else {
-      throw new Error("Failed to update recipe in JSON file");
+      throw new Error('Failed to update recipe in JSON file');
     }
   }
 
@@ -242,14 +242,14 @@ let Recipe;
 const connectToMongoDB = async () => {
   try {
     const MONGODB_URI =
-      process.env.MONGODB_URI || "mongodb://localhost:27017/recipe-app";
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe-app';
 
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     });
 
-    console.log("✅ MongoDB connected successfully");
+    console.log('✅ MongoDB connected successfully');
 
     // Define the recipe schema if it doesn't exist yet
     if (!recipeSchema) {
@@ -257,25 +257,25 @@ const connectToMongoDB = async () => {
         {
           title: { type: String, required: true },
           instructions: { type: String, required: true },
-          ingredients: { type: String, default: "" },
+          ingredients: { type: String, default: '' },
           is_ai_generated: { type: Boolean, default: false },
-          source: { type: String, default: "manual" },
+          source: { type: String, default: 'manual' },
           tags: { type: [String], default: [] },
-          difficulty: { type: String, default: "easy" },
+          difficulty: { type: String, default: 'easy' },
           prep_time: { type: Number, default: 0 },
           cook_time: { type: Number, default: 0 },
-          servings: { type: Number, default: 1 },
+          servings: { type: Number, default: 1 }
         },
-        { timestamps: true },
+        { timestamps: true }
       );
 
       // Create the model if it doesn't exist
-      Recipe = mongoose.model("Recipe", recipeSchema);
+      Recipe = mongoose.model('Recipe', recipeSchema);
     }
 
     return true;
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
+    console.error('❌ MongoDB connection error:', error);
     return false;
   }
 };
@@ -284,13 +284,13 @@ const connectToMongoDB = async () => {
 class StorageFactory {
   static create(storageType, options = {}) {
     switch (storageType) {
-      case "mongodb":
+      case 'mongodb':
         if (!options.Recipe && !Recipe) {
-          throw new Error("Recipe model is required for MongoDB storage");
+          throw new Error('Recipe model is required for MongoDB storage');
         }
         return new MongoDBStorage(options.Recipe || Recipe);
 
-      case "json":
+      case 'json':
         return new JSONStorage(options.recipesFilePath);
 
       default:
@@ -305,5 +305,5 @@ module.exports = {
   JSONStorage,
   StorageFactory,
   connectToMongoDB,
-  Recipe,
+  Recipe
 };

@@ -8,11 +8,7 @@
     "updated_at": "2025-09-07T15:08:55.479Z",
     "is_ai_generated": false,
     "source": "manual",
-    "tags": [
-      "asian",
-      "rice",
-      "quick"
-    ],
+    "tags": ["asian", "rice", "quick"],
     "difficulty": "easy",
     "prep_time": 5,
     "cook_time": 10,
@@ -27,11 +23,7 @@
     "updated_at": "2025-09-07T15:08:55.480Z",
     "is_ai_generated": false,
     "source": "manual",
-    "tags": [
-      "italian",
-      "pasta",
-      "vegetarian"
-    ],
+    "tags": ["italian", "pasta", "vegetarian"],
     "difficulty": "easy",
     "prep_time": 5,
     "cook_time": 15,
@@ -46,12 +38,7 @@
     "updated_at": "2025-09-12T07:15:08.029Z",
     "is_ai_generated": true,
     "source": "ai_gemini",
-    "tags": [
-      "asian",
-      "stir-fry",
-      "noodles",
-      "chicken"
-    ],
+    "tags": ["asian", "stir-fry", "noodles", "chicken"],
     "difficulty": "medium",
     "prep_time": 10,
     "cook_time": 20,
@@ -66,13 +53,7 @@
     "updated_at": "2025-09-12T07:16:56.132Z",
     "is_ai_generated": true,
     "source": "ai_gemini",
-    "tags": [
-      "thai",
-      "fried-rice",
-      "chicken",
-      "pork",
-      "vegetables"
-    ],
+    "tags": ["thai", "fried-rice", "chicken", "pork", "vegetables"],
     "difficulty": "medium",
     "prep_time": 15,
     "cook_time": 20,

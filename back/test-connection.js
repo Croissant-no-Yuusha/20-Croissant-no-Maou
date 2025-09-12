@@ -5,9 +5,12 @@ const { connectToMongoDB } = require('./database');
 
 async function testConnection() {
   console.log('🔍 Testing MongoDB connection...');
-  console.log('MONGODB_URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Not set');
+  console.log(
+    'MONGODB_URI:',
+    process.env.MONGODB_URI ? '✅ Set' : '❌ Not set'
+  );
   console.log('STORAGE_TYPE:', process.env.STORAGE_TYPE);
-  
+
   try {
     const connected = await connectToMongoDB();
     if (connected) {
@@ -20,7 +23,7 @@ async function testConnection() {
   } catch (error) {
     console.error('❌ Connection test error:', error.message);
   }
-  
+
   process.exit(0);
 }
 
