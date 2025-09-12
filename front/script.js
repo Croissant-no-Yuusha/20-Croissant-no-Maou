@@ -1,4 +1,4 @@
-    const API_URL = "http://localhost:3039";
+    const API_URL = "";
 let aiSuggestionCount = parseInt(localStorage.getItem('aiSuggestionCount')) || 0;
 
 // Theme and Language Management
