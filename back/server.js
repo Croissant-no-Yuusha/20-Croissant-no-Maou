@@ -387,6 +387,9 @@ app.delete("/recipes/:id", async (req, res) => {
 // ======================
 app.post("/ai-suggest", async (req, res) => {
   const { ingredients, language = 'en' } = req.body;
+  
+  // Debug logging to see what language is being received
+  console.log(`🔍 AI Request - Language: ${language}, Ingredients: ${ingredients?.trim()}`);
 
   if (!ingredients || !ingredients.trim()) {
     return res.status(400).json({ 
@@ -446,6 +449,7 @@ Make this recipe realistic and delicious. If some basic ingredients are missing 
     };
 
     const selectedPrompt = prompts[language] || prompts['en'];
+    console.log(`📝 Selected prompt language: ${language}, Using: ${language === 'th' ? 'Thai' : 'English'} prompt`);
 
     const postData = JSON.stringify({
       contents: [

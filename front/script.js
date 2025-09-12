@@ -703,6 +703,7 @@ function resetRecipeForm() {
 
   try {
     const currentLang = localStorage.getItem('language') || 'en';
+    console.log(`🌐 Frontend sending language: ${currentLang}`);
     const res = await fetch(`${API_URL}/ai-suggest`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
