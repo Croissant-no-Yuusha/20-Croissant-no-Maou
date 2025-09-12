@@ -376,15 +376,15 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT | 3000;
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
   console.log(
-    "Google Gemini API Key loaded:",
-    API_KEY && API_KEY !== "your-api-key-here"
-      ? "✅ Yes"
-      : "❌ No - Please set GOOGLE_GEMINI_API_KEY environment variable",
+    'Google Gemini API Key loaded:',
+    API_KEY && API_KEY !== 'your-api-key-here'
+      ? '✅ Yes'
+      : '❌ No - Please set API_KEY environment variable'
   );
   console.log("📁 Recipes stored in:", RECIPES_FILE);
 });
