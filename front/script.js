@@ -222,7 +222,6 @@ const modalManager = {
             ${recipe.difficulty ? `<p><strong>📊 ${translations.difficulty || 'Difficulty'}:</strong> ${recipe.difficulty}</p>` : ''}
             ${recipe.prep_time || recipe.cook_time ? `<p><strong>⏱️ ${translations.time || 'Time'}:</strong> ${recipe.prep_time || 0}min prep, ${recipe.cook_time || 0}min cook</p>` : ''}
             ${recipe.servings ? `<p><strong>👥 ${translations.servings || 'Servings'}:</strong> ${recipe.servings}</p>` : ''}
-            ${recipe.tags && recipe.tags.length > 0 ? `<p><strong>🏷️ ${translations.tags || 'Tags'}:</strong> ${recipe.tags.join(', ')}</p>` : ''}
           </div>
         </div>
       </div>
@@ -764,26 +763,24 @@ function resetRecipeForm() {
       body: JSON.stringify({ ingredients, language: currentLang })
     });
 
-    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`Server error: ${res.status} - ${errorData.error || 'Unknown error'}`);
+    }
 
     const data = await res.json();
+    console.log('🎯 AI Response received:', { hasData: !!data, hasSuggestion: !!data.suggestion });
+    
     let suggestion = data.suggestion || "No recipe suggestion received from the server.";
 
-    // Show raw AI output with better formatting
-    const lang8 = localStorage.getItem('language') || 'en';
-    const trans8 = themeManager.getTranslations(lang8);
-    outputElement.innerHTML = `
-      <div class="ai-recipe-result">
-        <div class="ai-suggestion-text">${suggestion}</div>
-        <div class="ai-actions" style="margin-top: 1rem; display: flex; gap: 0.75rem;">
-          <button class="btn btn-primary btn-small" onclick="quickSaveRecipe(\`${suggestion.replace(/`/g, '\\`')}\`, \`${ingredients}\`)">
-            ${trans8.quick_save || 'Quick Save'}
-          </button>
-        </div>
-      </div>
-    `;
-    outputElement.className = "ai-output has-content show";
-    outputElement.scrollIntoView({ behavior: 'smooth' });
+    // Hide AI output section since we don't need to show the response
+    outputElement.style.display = "none";
+    outputElement.className = "ai-output";
+
+    // Show success notification
+    const langSuccess = localStorage.getItem('language') || 'en';
+    const transSuccess = themeManager.getTranslations(langSuccess);
+    notificationManager.show(transSuccess.ai_recipe_generated || 'AI recipe generated successfully!', 'success');
 
     // --- Parse the structured recipe ---
     let title = "AI Generated Recipe";
@@ -840,17 +837,35 @@ function resetRecipeForm() {
     document.getElementById("formTitle").textContent = transForm.save_ai_recipe || "Save AI Recipe";
 
     // Highlight the form
-    document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
-    const formCard = document.querySelector('#recipeForm').closest('.card');
-    formCard.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
-    setTimeout(() => formCard.style.boxShadow = '', 2000);
+    const recipeForm = document.getElementById("recipeForm");
+    if (recipeForm) {
+      recipeForm.scrollIntoView({ behavior: 'smooth' });
+      const formCard = recipeForm.closest('.card');
+      if (formCard) {
+        formCard.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
+        setTimeout(() => formCard.style.boxShadow = '', 2000);
+      }
+    }
 
     // Stats will be updated when recipes are loaded from database
 
   } catch (error) {
-    console.error("AI generation error:", error);
-    outputElement.innerHTML = `❌ Error: ${error.message}<br><br>Please check your connection and try again.`;
-    outputElement.className = "ai-output";
+    console.error("❌ AI generation error:", error);
+    
+    // Show error notification
+    const langError = localStorage.getItem('language') || 'en';
+    const transError = themeManager.getTranslations(langError);
+    notificationManager.show(transError.ai_generation_failed || 'AI generation failed. Please try again.', 'error');
+    
+    // Update output element with error
+    outputElement.innerHTML = `
+      <div class="ai-error">
+        <h4>❌ ${transError.generation_error || 'Generation Error'}</h4>
+        <p>${error.message}</p>
+        <p>${transError.try_again_message || 'Please check your connection and try again.'}</p>
+      </div>
+    `;
+    outputElement.className = "ai-output error show";
   } finally {
     const lang6 = localStorage.getItem('language') || 'en';
     const trans6 = themeManager.getTranslations(lang6);
@@ -891,13 +906,18 @@ function resetRecipeForm() {
       const translations = themeManager.getTranslations(lang);
       document.getElementById("formTitle").textContent = translations.save_ai_recipe || "Save AI Recipe";
       
-      document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
-      
-      const formCard = document.querySelector('#recipeForm').closest('.card');
-      formCard.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
-      setTimeout(() => {
-        formCard.style.boxShadow = '';
-      }, 2000);
+      const recipeForm = document.getElementById("recipeForm");
+      if (recipeForm) {
+        recipeForm.scrollIntoView({ behavior: 'smooth' });
+        
+        const formCard = recipeForm.closest('.card');
+        if (formCard) {
+          formCard.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
+          setTimeout(() => {
+            formCard.style.boxShadow = '';
+          }, 2000);
+        }
+      }
     }
 
     document.getElementById("ingredients").addEventListener("keypress", (e) => {

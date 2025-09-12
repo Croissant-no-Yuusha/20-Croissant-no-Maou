@@ -81,12 +81,16 @@ const translations_th = {
   edit_recipe_button: "แก้ไขสูตรอาหาร",
   delete_recipe_button: "ลบสูตรอาหาร",
   
-  // Quick Actions
+  // Quick Actions  
   quick_save: "บันทึกด่วน",
-  use_this_recipe: "ใช้สูตรนี้"
-};
-
-// Export for use in other files
+  use_this_recipe: "ใช้สูตรนี้",
+  
+  // AI Generation Status
+  ai_recipe_generated: "สร้างสูตรอาหารด้วย AI สำเร็จ!",
+  ai_generation_failed: "การสร้างสูตรอาหารด้วย AI ล้มเหลว กรุณาลองใหม่",
+  generation_error: "ข้อผิดพลาดในการสร้าง",
+  try_again_message: "กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่"
+};// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = translations_th;
 }

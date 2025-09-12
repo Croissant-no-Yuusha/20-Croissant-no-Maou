@@ -83,7 +83,13 @@ const translations_en = {
   
   // Quick Actions
   quick_save: "Quick Save",
-  use_this_recipe: "Use This Recipe"
+  use_this_recipe: "Use This Recipe",
+  
+  // AI Generation Status
+  ai_recipe_generated: "AI recipe generated successfully!",
+  ai_generation_failed: "AI generation failed. Please try again.",
+  generation_error: "Generation Error",
+  try_again_message: "Please check your connection and try again."
 };
 
 // Export for use in other files
