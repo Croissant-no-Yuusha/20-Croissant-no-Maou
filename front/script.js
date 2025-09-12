@@ -94,6 +94,52 @@ const themeManager = {
   }
 };
 
+// Ingredient Formatting Helper Functions
+function formatIngredientsForCard(ingredients) {
+  if (!ingredients) return '';
+  
+  // Convert any format to single line comma-separated for card view
+  return ingredients
+    .replace(/\n+/g, '\n')  // Normalize multiple line breaks to single
+    .split('\n')
+    .map(line => line.replace(/^\s*[-*•]\s*/, '').trim())  // Remove bullets and trim
+    .filter(line => line.length > 0)
+    .join(', ');
+}
+
+function formatIngredientsForModal(ingredients) {
+  if (!ingredients) return '';
+  
+  // Convert to HTML bullet points for modal view
+  const ingredientLines = ingredients
+    .split('\n')
+    .map(line => line.replace(/^\s*[-*•]\s*/, '').trim())
+    .filter(line => line.length > 0);
+  
+  return ingredientLines
+    .map(line => `<div class="ingredient-item">• ${line}</div>`)
+    .join('');
+}
+
+function formatInstructionsForCard(instructions) {
+  if (!instructions) return '';
+  
+  // Convert line breaks to spaces and truncate for card view
+  const singleLine = instructions.replace(/\n+/g, ' ').trim();
+  const truncated = singleLine.length > 150 
+    ? singleLine.substring(0, 150) + '...' 
+    : singleLine;
+    
+  return truncated;
+}
+
+function formatInstructionsForModal(instructions) {
+  if (!instructions) return '';
+  
+  // Preserve line breaks for modal view
+  return instructions.replace(/\n/g, '<br>');
+}
+
 // Modal Management
 const modalManager = {
   init() {
@@ -145,13 +191,13 @@ const modalManager = {
         ${recipe.ingredients ? `
           <div class="modal-section">
             <h4>🥘 ${translations.ingredients || 'Ingredients'}</h4>
-            <div class="modal-ingredients">${recipe.ingredients}</div>
+            <div class="modal-ingredients">${formatIngredientsForModal(recipe.ingredients)}</div>
           </div>
         ` : ''}
         
         <div class="modal-section">
           <h4>📝 ${translations.instructions || 'Instructions'}</h4>
-          <div class="modal-instructions">${recipe.instructions.replace(/\n/g, '<br>')}</div>
+          <div class="modal-instructions">${formatInstructionsForModal(recipe.instructions)}</div>
         </div>
         
         <div class="modal-section">
@@ -386,11 +432,6 @@ function resetRecipeForm() {
           const lang = localStorage.getItem('language') || 'en';
           const translations = themeManager.getTranslations(lang);
           
-          // Truncate instructions for card view
-          const truncatedInstructions = recipe.instructions.length > 150 
-            ? recipe.instructions.substring(0, 150) + '...' 
-            : recipe.instructions;
-          
           recipeCard.innerHTML = `
             <div class="recipe-title">
               🍽️ ${recipe.title}
@@ -398,10 +439,10 @@ function resetRecipeForm() {
             </div>
             ${recipe.ingredients ? `
               <div class="recipe-ingredients">
-                <strong>🥘 ${translations.ingredients || 'Ingredients'}:</strong> ${recipe.ingredients}
+                <strong>🥘 ${translations.ingredients || 'Ingredients'}:</strong> ${formatIngredientsForCard(recipe.ingredients)}
               </div>
             ` : ''}
-            <div class="recipe-instructions">${truncatedInstructions.replace(/\n/g, '<br>')}</div>
+            <div class="recipe-instructions">${formatInstructionsForCard(recipe.instructions)}</div>
             <div class="recipe-meta">
               📅 ${translations.created || 'Created'}: ${createdDate}
               ${isUpdated ? `• ${translations.updated || 'Updated'}: ${updatedDate}` : ''}
@@ -756,9 +797,12 @@ function resetRecipeForm() {
     if (ingredientsMatch) {
       parsedIngredients = ingredientsMatch[1]
         .split('\n')
-        .map(line => line.replace(/[-*•]/g, '').trim())
+        .map(line => {
+          const cleanLine = line.replace(/^\s*[-*•]\s*/, '').trim(); // Remove existing bullets
+          return cleanLine ? `• ${cleanLine}` : ''; // Add consistent bullet points
+        })
         .filter(line => line.length > 0)
-        .join(', ');
+        .join('\n');
     }
 
     // English instructions patterns

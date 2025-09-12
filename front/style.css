@@ -704,6 +704,9 @@ textarea {
   font-size: 0.875rem;
   color: var(--text-muted);
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recipe-instructions {
@@ -1163,6 +1166,11 @@ html {
   padding: 1rem;
   font-size: 0.95rem;
   color: var(--text-secondary);
+}
+
+.ingredient-item {
+  padding: 0.25rem 0;
+  line-height: 1.5;
 }
 
 .modal-instructions {
