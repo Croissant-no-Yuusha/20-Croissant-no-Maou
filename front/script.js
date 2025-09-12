@@ -110,14 +110,27 @@ function formatIngredientsForCard(ingredients) {
 function formatIngredientsForModal(ingredients) {
   if (!ingredients) return '';
   
-  // Convert to HTML bullet points for modal view
-  const ingredientLines = ingredients
-    .split('\n')
-    .map(line => line.replace(/^\s*[-*•]\s*/, '').trim())
-    .filter(line => line.length > 0);
+  // Split by line breaks first, then by bullet points within each line
+  let allIngredients = [];
   
-  return ingredientLines
-    .map(line => `<div class="ingredient-item">• ${line}</div>`)
+  const lines = ingredients.split('\n');
+  
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    
+    // Split by bullet points within the line
+    const bulletParts = trimmed.split('•').map(part => part.trim()).filter(part => part.length > 0);
+    
+    bulletParts.forEach(part => {
+      // Clean any remaining bullet symbols at the start
+      const cleaned = part.replace(/^\s*[-*•]\s*/, '').trim();
+      if (cleaned) allIngredients.push(cleaned);
+    });
+  });
+  
+  return allIngredients
+    .map(ingredient => `<div class="ingredient-item">• ${ingredient}</div>`)
     .join('');
 }
 
