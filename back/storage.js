@@ -248,11 +248,9 @@ class JSONStorage extends Storage {
 let recipeSchema;
 let Recipe;
 
-const connectToMongoDB = () => {
-  const MONGODB_URI =
-    process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe-app';
-
-  return connect(MONGODB_URI).then(
+const connectToMongoDB = (connectionString) => {
+  console.log('Connecting to MongoDB ...');
+  return connect(connectionString).then(
     () => {
       console.log('✅ MongoDB connected successfully');
 
