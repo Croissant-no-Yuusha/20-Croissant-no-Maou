@@ -19,7 +19,6 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "openai": "^5.19.1",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.0"
   }

@@ -94,7 +94,7 @@ body {
 .theme-btn {
   background: none;
   border: none;
-  padding: 12px;
+  padding: 10px;
   cursor: pointer;
   border-radius: var(--radius-md);
   font-size: 20px;
@@ -110,7 +110,7 @@ body {
 .language-select {
   background: var(--bg-card);
   border: none;
-  padding: 8px 12px;
+  /* padding: 8px 12px; */
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: 14px;

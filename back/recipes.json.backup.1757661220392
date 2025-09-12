@@ -8,11 +8,7 @@
     "updated_at": "2025-09-07T15:08:55.479Z",
     "is_ai_generated": false,
     "source": "manual",
-    "tags": [
-      "asian",
-      "rice",
-      "quick"
-    ],
+    "tags": ["asian", "rice", "quick"],
     "difficulty": "easy",
     "prep_time": 5,
     "cook_time": 10,
@@ -27,11 +23,7 @@
     "updated_at": "2025-09-07T15:08:55.480Z",
     "is_ai_generated": false,
     "source": "manual",
-    "tags": [
-      "italian",
-      "pasta",
-      "vegetarian"
-    ],
+    "tags": ["italian", "pasta", "vegetarian"],
     "difficulty": "easy",
     "prep_time": 5,
     "cook_time": 15,
@@ -46,11 +38,7 @@
     "updated_at": "2025-09-07T15:21:47.690Z",
     "is_ai_generated": true,
     "source": "ai_gemini",
-    "tags": [
-      "breakfast",
-      "eggs",
-      "mediterranean"
-    ],
+    "tags": ["breakfast", "eggs", "mediterranean"],
     "difficulty": "easy",
     "prep_time": 5,
     "cook_time": 15,
@@ -58,19 +46,14 @@
   },
   {
     "id": 4,
-    "title": "Chicken & Egg Rice Noodle Stir-FDS",
+    "title": "Chicken & Egg Rice Noodle Stir-Fry",
     "instructions": "**Recipe Title:** Chicken & Egg Rice Noodle Stir-Fry\n\n**Ingredients:**\n- 4 oz Rice Noodles\n- 1 boneless, skinless Chicken Breast (about 6 oz), cut into bite-sized pieces\n- 2 large Eggs\n- 1 tablespoon Soy Sauce\n- 1 tablespoon Oyster Sauce\n- 1 teaspoon Sesame Oil\n- 1/2 teaspoon Garlic Powder\n- 1/4 teaspoon Ground Ginger\n- 1/4 cup Vegetable Oil\n- Salt and Pepper to taste\n- Optional Garnish: Chopped green onions\n\n**Instructions:**\n1. Cook the rice noodles according to package directions. Drain well and set aside.\n2. In a small bowl, whisk together soy sauce, oyster sauce, sesame oil, garlic powder, and ground ginger. Set aside.\n3. Season the chicken pieces with salt and pepper.\n4. Heat 1 tablespoon of vegetable oil in a large skillet or wok over medium-high heat. Add the chicken and cook until cooked through and lightly browned, about 5-7 minutes. Remove the chicken from the skillet and set aside.\n5. Add the remaining 1 tablespoon of vegetable oil to the skillet. Crack the eggs into the skillet and scramble until cooked through but still slightly soft. Remove the eggs from the skillet and set aside.\n6. Add the cooked rice noodles to the skillet and pour the sauce mixture over them. Stir-fry for 1-2 minutes, until the noodles are coated and heated through.\n7. Return the cooked chicken and scrambled eggs to the skillet. Stir-fry for another minute until everything is well combined and heated through.\n8. Taste and adjust seasoning with salt and pepper if needed.\n9. Garnish with chopped green onions (optional) and serve immediately.\n\n**Cooking Time:** 20 minutes\n**Servings:** 2",
     "ingredients": "rice noodle chicken egg",
     "created_at": "2025-09-07T15:24:16.469Z",
-    "updated_at": "2025-09-12T07:15:08.029Z",
+    "updated_at": "2025-09-07T15:24:16.469Z",
     "is_ai_generated": true,
     "source": "ai_gemini",
-    "tags": [
-      "asian",
-      "stir-fry",
-      "noodles",
-      "chicken"
-    ],
+    "tags": ["asian", "stir-fry", "noodles", "chicken"],
     "difficulty": "medium",
     "prep_time": 10,
     "cook_time": 20,
@@ -78,20 +61,14 @@
   },
   {
     "id": 5,
-    "title": "ข้าวผัดสามสหาย หรรษาผักกรอบsa",
-    "instructions": "**ชื่อเมนู:** ข้าวผัดสามสหาย หรรษาผักกรอบsa\n\n**ส่วนผสม:**as \n- เนื้อไก่หั่นเต๋า 200 กรัม\n- เนื้อหมูหั่นเต๋า 200 กรัมsa\n- ข้าวสวยหุงสุกแช่เย็น 3 ถ้วย\n- แครอทหั่นเต๋าเล็ก 1/2 ถ้วย\n- ถั่วลันเตาแช่แข็ง 1/2 ถ้วย\n- ข้าวโพดหวาน (แกะเมล็ด) 1/2 ถ้วย\n- หอมใหญ่สับละเอียด 1/4 ถ้วย\n- กระเทียมสับละเอียด 1 ช้อนโต๊ะ\n- ไข่ไก่ 2 ฟอง\n- ซีอิ๊วขาว 2 ช้อนโต๊ะ\n- ซอสหอยนางรม 1 ช้อนโต๊ะ\n- น้ำตาลทราย 1/2 ช้อนชา\n- พริกไทยป่น เล็กน้อย\n- น้ำมันพืช 2 ช้อนโต๊ะ\n- ต้นหอมซอย สำหรับตกแต่ง\n- แตงกวาหั่นแว่น สำหรับเสิร์ฟ\n\n**วิธีทำ:**\n1. เตรียมเนื้อสัตว์และผัก: นำเนื้อไก่และเนื้อหมูมาหมักด้วยซีอิ๊วขาว 1 ช้อนโต๊ะ และพริกไทยเล็กน้อย พักไว้ 10 นาที\n2. ผัดไข่: ตั้งกระทะด้วยไฟกลาง ใส่น้ำมันพืช 1 ช้อนโต๊ะลงไป เมื่อน้ำมันร้อน ตอกไข่ลงไป ยีให้ไข่แตกเป็นชิ้นเล็กๆ ผ��ดจนไข่สุก ตักขึ้นพักไว้\n3. ผัดเนื้อสัตว์: ใส่น้ำมันพืชที่เหลือลงในกระทะ นำกระเทียมสับลงไปผัดจนหอม ใส่เนื้อไก่และเนื้อหมูที่หมักไว้ลงไปผัดจนสุก\n4. ผัดผัก: ใส่หอมใหญ่สับ แครอท ถั่วลันเตา และข้าวโพดหวานลงไปผัดให้เข้ากัน ผัดจนผักเริ่มสุก\n5. ผัดข้าว: ใส่ข้าวสวยลงไปในกระทะ ผัดให้เข้ากับส่วนผสมทั้งหมด ระวังอย่าให้ข้าวติดกระทะ\n6. ปรุงรส: ปรุงรสด้วยซีอิ๊วขาว ซอสหอยนางรม และน้ำตาลทราย ผัดให้เข้ากัน ชิมรสตามชอบ\n7. ใส่ไข่: ใส่ไข่ที่ผัดไว้ลงไป ผัดให้เข้ากันอีกครั้ง\n8. จัดเสิร์ฟ: ตักข้าวผัดใส่จาน โรยด้วยต้นหอมซอย เสิร์ฟพร้อมแตงกวาหั่นแว่น\n\n**เวลาในการทำอาหาร:** เตรียม 15 นาที, ปรุง 20 นาที\n**จำนวนที่เสิร์ฟ:** 2-3 คน",
-    "ingredients": "ไก่ หมู ผัก ข้าวsa",
+    "title": "ข้าวผัดสามสหาย หรรษาผักกรอบ",
+    "instructions": "**ชื่อเมนู:** ข้าวผัดสามสหาย หรรษาผักกรอบ\n\n**ส่วนผสม:**\n- เนื้อไก่หั่นเต๋า 200 กรัม\n- เนื้อหมูหั่นเต๋า 200 กรัม\n- ข้าวสวยหุงสุกแช่เย็น 3 ถ้วย\n- แครอทหั่นเต๋าเล็ก 1/2 ถ้วย\n- ถั่วลันเตาแช่แข็ง 1/2 ถ้วย\n- ข้าวโพดหวาน (แกะเมล็ด) 1/2 ถ้วย\n- หอมใหญ่สับละเอียด 1/4 ถ้วย\n- กระเทียมสับละเอียด 1 ช้อนโต๊ะ\n- ไข่ไก่ 2 ฟอง\n- ซีอิ๊วขาว 2 ช้อนโต๊ะ\n- ซอสหอยนางรม 1 ช้อนโต๊ะ\n- น้ำตาลทราย 1/2 ช้อนชา\n- พริกไทยป่น เล็กน้อย\n- น้ำมันพืช 2 ช้อนโต๊ะ\n- ต้นหอมซอย สำหรับตกแต่ง\n- แตงกวาหั่นแว่น สำหรับเสิร์ฟ\n\n**วิธีทำ:**\n1. เตรียมเนื้อสัตว์และผัก: นำเนื้อไก่และเนื้อหมูมาหมักด้วยซีอิ๊วขาว 1 ช้อนโต๊ะ และพริกไทยเล็กน้อย พักไว้ 10 นาที\n2. ผัดไข่: ตั้งกระทะด้วยไฟกลาง ใส่น้ำมันพืช 1 ช้อนโต๊ะลงไป เมื่อน้ำมันร้อน ตอกไข่ลงไป ยีให้ไข่แตกเป็นชิ้นเล็กๆ ผ��ดจนไข่สุก ตักขึ้นพักไว้\n3. ผัดเนื้อสัตว์: ใส่น้ำมันพืชที่เหลือลงในกระทะ นำกระเทียมสับลงไปผัดจนหอม ใส่เนื้อไก่และเนื้อหมูที่หมักไว้ลงไปผัดจนสุก\n4. ผัดผัก: ใส่หอมใหญ่สับ แครอท ถั่วลันเตา และข้าวโพดหวานลงไปผัดให้เข้ากัน ผัดจนผักเริ่มสุก\n5. ผัดข้าว: ใส่ข้าวสวยลงไปในกระทะ ผัดให้เข้ากับส่วนผสมทั้งหมด ระวังอย่าให้ข้าวติดกระทะ\n6. ปรุงรส: ปรุงรสด้วยซีอิ๊วขาว ซอสหอยนางรม และน้ำตาลทราย ผัดให้เข้ากัน ชิมรสตามชอบ\n7. ใส่ไข่: ใส่ไข่ที่ผัดไว้ลงไป ผัดให้เข้ากันอีกครั้ง\n8. จัดเสิร์ฟ: ตักข้าวผัดใส่จาน โรยด้วยต้นหอมซอย เสิร์ฟพร้อมแตงกวาหั่นแว่น\n\n**เวลาในการทำอาหาร:** เตรียม 15 นาที, ปรุง 20 นาที\n**จำนวนที่เสิร์ฟ:** 2-3 คน",
+    "ingredients": "ไก่ หมู ผัก ข้าว",
     "created_at": "2025-09-07T15:27:16.163Z",
-    "updated_at": "2025-09-12T07:16:56.132Z",
+    "updated_at": "2025-09-07T15:27:16.163Z",
     "is_ai_generated": true,
     "source": "ai_gemini",
-    "tags": [
-      "thai",
-      "fried-rice",
-      "chicken",
-      "pork",
-      "vegetables"
-    ],
+    "tags": ["thai", "fried-rice", "chicken", "pork", "vegetables"],
     "difficulty": "medium",
     "prep_time": 15,
     "cook_time": 20,
