@@ -58,93 +58,102 @@ class MongoDBStorage extends Storage {
     };
   }
 
-  async getAllRecipes() {
-    try {
-      const recipes = await this.Recipe.find({}).sort({ createdAt: -1 });
-      return recipes.map((recipe) => this.#transformMongoToRecipe(recipe));
-    } catch (error) {
-      console.error('MongoDB read error:', error);
-      return [];
-    }
-  }
-
-  async getRecipeById(id) {
-    try {
-      const recipe = await this.Recipe.findById(id);
-      if (!recipe) return null;
-
-      return this.#transformMongoToRecipe(recipe);
-    } catch (error) {
-      console.error('MongoDB findById error:', error);
-      return null;
-    }
-  }
-
-  async createRecipe(recipeData) {
-    try {
-      const recipe = new this.Recipe(recipeData);
-      const saved = await recipe.save();
-
-      return {
-        id: saved._id.toString(),
-        title: saved.title,
-        instructions: saved.instructions,
-        ingredients: saved.ingredients,
-        created_at: saved.createdAt,
-        updated_at: saved.updatedAt,
-        is_ai_generated: saved.is_ai_generated,
-        source: saved.source,
-        tags: saved.tags,
-        difficulty: saved.difficulty,
-        prep_time: saved.prep_time,
-        cook_time: saved.cook_time,
-        servings: saved.servings
-      };
-    } catch (error) {
-      console.error('MongoDB create error:', error);
-      throw error;
-    }
-  }
-
-  async updateRecipe(id, updateData) {
-    try {
-      const updated = await this.Recipe.findByIdAndUpdate(
-        id,
-        { ...updateData, updatedAt: new Date() },
-        { new: true, runValidators: true }
+  getAllRecipes() {
+    return this.Recipe.find({})
+      .sort({ createdAt: -1 })
+      .then(
+        (recipes) => {
+          return recipes.map((recipe) => this.#transformMongoToRecipe(recipe));
+        },
+        (error) => {
+          console.error('MongoDB read error:', error);
+          return [];
+        }
       );
-
-      if (!updated) return null;
-
-      return {
-        id: updated._id.toString(),
-        title: updated.title,
-        instructions: updated.instructions,
-        ingredients: updated.ingredients,
-        created_at: updated.createdAt,
-        updated_at: updated.updatedAt,
-        is_ai_generated: updated.is_ai_generated,
-        source: updated.source,
-        tags: updated.tags,
-        difficulty: updated.difficulty,
-        prep_time: updated.prep_time,
-        cook_time: updated.cook_time,
-        servings: updated.servings
-      };
-    } catch (error) {
-      console.error('MongoDB update error:', error);
-      throw error;
-    }
   }
 
-  async deleteRecipe(id) {
-    try {
-      const deleted = await this.Recipe.findByIdAndDelete(id);
-      return deleted !== null;
-    } catch (error) {
-      console.error('MongoDB delete error:', error);
-      throw error;
-    }
+  getRecipeById(id) {
+    return this.Recipe.findById(id).then(
+      (recipe) => {
+        if (!recipe) return null;
+        return this.#transformMongoToRecipe(recipe);
+      },
+      (error) => {
+        console.error('MongoDB findById error:', error);
+        return null;
+      }
+    );
+  }
+
+  createRecipe(recipeData) {
+    const recipe = new this.Recipe(recipeData);
+    return recipe.save().then(
+      (saved) => {
+        return {
+          id: saved._id.toString(),
+          title: saved.title,
+          instructions: saved.instructions,
+          ingredients: saved.ingredients,
+          created_at: saved.createdAt,
+          updated_at: saved.updatedAt,
+          is_ai_generated: saved.is_ai_generated,
+          source: saved.source,
+          tags: saved.tags,
+          difficulty: saved.difficulty,
+          prep_time: saved.prep_time,
+          cook_time: saved.cook_time,
+          servings: saved.servings
+        };
+      },
+      (error) => {
+        console.error('MongoDB create error:', error);
+        throw error;
+      }
+    );
+  }
+
+  updateRecipe(id, updateData) {
+    return this.Recipe.findByIdAndUpdate(
+      id,
+      { ...updateData, updatedAt: new Date() },
+      { new: true, runValidators: true }
+    ).then(
+      (updated) => {
+        if (!updated) return null;
+
+        return {
+          id: updated._id.toString(),
+          title: updated.title,
+          instructions: updated.instructions,
+          ingredients: updated.ingredients,
+          created_at: updated.createdAt,
+          updated_at: updated.updatedAt,
+          is_ai_generated: updated.is_ai_generated,
+          source: updated.source,
+          tags: updated.tags,
+          difficulty: updated.difficulty,
+          prep_time: updated.prep_time,
+          cook_time: updated.cook_time,
+          servings: updated.servings
+        };
+      },
+      (error) => {
+        console.error('MongoDB update error:', error);
+        throw error;
+      }
+    );
+  }
+
+  deleteRecipe(id) {
+    return this.Recipe.findByIdAndDelete(id).then(
+      (deleted) => {
+        return deleted !== null;
+      },
+      (error) => {
+        console.error('MongoDB delete error:', error);
+        throw error;
+      }
+    );
   }
 }
 
@@ -152,12 +161,12 @@ class MongoDBStorage extends Storage {
 class JSONStorage extends Storage {
   constructor(recipesFilePath) {
     super();
-    this.recipesFile = recipesFilePath || path.join(__dirname, 'recipes.json');
+    this.recipesFile = recipesFilePath || join(__dirname, 'recipes.json');
   }
 
   #readRecipes() {
     try {
-      const data = fs.readFileSync(this.recipesFile, 'utf8');
+      const data = readFileSync(this.recipesFile, 'utf8');
       return JSON.parse(data);
     } catch (error) {
       console.error('Error reading recipes:', error);
@@ -167,7 +176,7 @@ class JSONStorage extends Storage {
 
   #writeRecipes(recipes) {
     try {
-      fs.writeFileSync(this.recipesFile, JSON.stringify(recipes, null, 2));
+      writeFileSync(this.recipesFile, JSON.stringify(recipes, null, 2));
       return true;
     } catch (error) {
       console.error('Error writing recipes:', error);
@@ -239,45 +248,43 @@ class JSONStorage extends Storage {
 let recipeSchema;
 let Recipe;
 
-const connectToMongoDB = async () => {
-  try {
-    const MONGODB_URI =
-      process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe-app';
+const connectToMongoDB = () => {
+  const MONGODB_URI =
+    process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe-app';
 
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+  return connect(MONGODB_URI).then(
+    () => {
+      console.log('✅ MongoDB connected successfully');
 
-    console.log('✅ MongoDB connected successfully');
+      // Define the recipe schema if it doesn't exist yet
+      if (!recipeSchema) {
+        recipeSchema = new Schema(
+          {
+            title: { type: String, required: true },
+            instructions: { type: String, required: true },
+            ingredients: { type: String, default: '' },
+            is_ai_generated: { type: Boolean, default: false },
+            source: { type: String, default: 'manual' },
+            tags: { type: [String], default: [] },
+            difficulty: { type: String, default: 'easy' },
+            prep_time: { type: Number, default: 0 },
+            cook_time: { type: Number, default: 0 },
+            servings: { type: Number, default: 1 }
+          },
+          { timestamps: true }
+        );
 
-    // Define the recipe schema if it doesn't exist yet
-    if (!recipeSchema) {
-      recipeSchema = new mongoose.Schema(
-        {
-          title: { type: String, required: true },
-          instructions: { type: String, required: true },
-          ingredients: { type: String, default: '' },
-          is_ai_generated: { type: Boolean, default: false },
-          source: { type: String, default: 'manual' },
-          tags: { type: [String], default: [] },
-          difficulty: { type: String, default: 'easy' },
-          prep_time: { type: Number, default: 0 },
-          cook_time: { type: Number, default: 0 },
-          servings: { type: Number, default: 1 }
-        },
-        { timestamps: true }
-      );
+        // Create the model if it doesn't exist
+        Recipe = model('Recipe', recipeSchema);
+      }
 
-      // Create the model if it doesn't exist
-      Recipe = mongoose.model('Recipe', recipeSchema);
+      return true;
+    },
+    (error) => {
+      console.error('❌ MongoDB connection error:', error);
+      return false;
     }
-
-    return true;
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
-    return false;
-  }
+  );
 };
 
 // Storage Factory to create the appropriate storage instance
