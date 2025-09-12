@@ -702,10 +702,11 @@ function resetRecipeForm() {
   generateBtn.classList.add('loading');
 
   try {
+    const currentLang = localStorage.getItem('language') || 'en';
     const res = await fetch(`${API_URL}/ai-suggest`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients })
+      body: JSON.stringify({ ingredients, language: currentLang })
     });
 
     if (!res.ok) throw new Error(`Server error: ${res.status}`);
@@ -734,12 +735,23 @@ function resetRecipeForm() {
     let parsedIngredients = ingredients;
     let instructions = suggestion;
 
-    const titleMatch = suggestion.match(/(?:Recipe Title:|Title:)\s*(.+)/i);
+    // Try parsing for both languages
+    // English patterns
+    let titleMatch = suggestion.match(/(?:\*\*Menu Name:\*\*|\*\*Recipe Title:\*\*|Recipe Title:|Title:|Menu Name:)\s*(.+)/i);
+    // Thai patterns  
+    if (!titleMatch) {
+      titleMatch = suggestion.match(/(?:\*\*ชื่อเมนู:\*\*|ชื่อเมนู:)\s*(.+)/i);
+    }
     if (titleMatch) {
       title = titleMatch[1].trim();
     }
 
-    const ingredientsMatch = suggestion.match(/Ingredients:\s*([\s\S]*?)(?=Instructions:|$)/i);
+    // English ingredients patterns
+    let ingredientsMatch = suggestion.match(/(?:\*\*Ingredients:\*\*|Ingredients:)\s*([\s\S]*?)(?=\*\*Instructions:|\*\*วิธีทำ:|Instructions:|วิธีทำ:|$)/i);
+    // Thai ingredients patterns
+    if (!ingredientsMatch) {
+      ingredientsMatch = suggestion.match(/(?:\*\*ส่วนผสม:\*\*|ส่วนผสม:)\s*([\s\S]*?)(?=\*\*วิธีทำ:|\*\*Instructions:|วิธีทำ:|Instructions:|$)/i);
+    }
     if (ingredientsMatch) {
       parsedIngredients = ingredientsMatch[1]
         .split('\n')
@@ -748,7 +760,12 @@ function resetRecipeForm() {
         .join(', ');
     }
 
-    const instructionsMatch = suggestion.match(/Instructions:\s*([\s\S]*)/i);
+    // English instructions patterns
+    let instructionsMatch = suggestion.match(/(?:\*\*Instructions:\*\*|Instructions:)\s*([\s\S]*)/i);
+    // Thai instructions patterns
+    if (!instructionsMatch) {
+      instructionsMatch = suggestion.match(/(?:\*\*วิธีทำ:\*\*|วิธีทำ:)\s*([\s\S]*)/i);
+    }
     if (instructionsMatch) {
       instructions = instructionsMatch[1]
         .trim()
@@ -792,8 +809,14 @@ function resetRecipeForm() {
       let instructions = suggestion;
       
       for (let line of lines) {
-        if (line.includes('Recipe Title:') || line.includes('**Recipe Title:**')) {
-          title = line.replace(/\*\*Recipe Title:\*\*|\*\*|\*|Recipe Title:/g, '').trim();
+        // English patterns
+        if (line.includes('Recipe Title:') || line.includes('**Recipe Title:**') || line.includes('**Menu Name:**') || line.includes('Menu Name:')) {
+          title = line.replace(/\*\*Recipe Title:\*\*|\*\*Menu Name:\*\*|\*\*|\*|Recipe Title:|Menu Name:/g, '').trim();
+          break;
+        }
+        // Thai patterns
+        if (line.includes('ชื่อเมนู:') || line.includes('**ชื่อเมนู:**')) {
+          title = line.replace(/\*\*ชื่อเมนู:\*\*|\*\*|\*|ชื่อเมนู:/g, '').trim();
           break;
         }
         if (line.includes('Title:')) {

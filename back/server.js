@@ -386,7 +386,7 @@ app.delete("/recipes/:id", async (req, res) => {
 // 🤖 AI Suggestion using Google Gemini API
 // ======================
 app.post("/ai-suggest", async (req, res) => {
-  const { ingredients } = req.body;
+  const { ingredients, language = 'en' } = req.body;
 
   if (!ingredients || !ingredients.trim()) {
     return res.status(400).json({ 
@@ -406,12 +406,9 @@ app.post("/ai-suggest", async (req, res) => {
     const https = require('https');
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
     
-    const postData = JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { 
-text: `คุณคือผู้ช่วยทำอาหารที่เป็นประโยชน์ สร้างสูตรอาหารอร่อยโดยใช้ส่วนผสมเหล่านี้: ${ingredients.trim()}
+    // Create language-specific prompts
+    const prompts = {
+      th: `คุณคือผู้ช่วยทำอาหารที่เป็นประโยชน์ สร้างสูตรอาหารอร่อยโดยใช้ส่วนผสมเหล่านี้: ${ingredients.trim()}
 
 โปรดให้คำตอบของคุณในรูปแบบนี้เป๊ะ ๆ:
 
@@ -427,9 +424,34 @@ text: `คุณคือผู้ช่วยทำอาหารที่เ�
 
 **เวลาในการทำอาหาร:** [เวลาเตรียมและเวลาในการปรุง]
 
-ทำให้สูตรนี้เป็นไปได้จริงและอร่อย หากส่วนผสมพื้นฐานบางอย่างหายไป (เช่น น้ำมัน เกลือ พริกไทย) สามารถใส่เพิ่มเติมได้`
+ทำให้สูตรนี้เป็นไปได้จริงและอร่อย หากส่วนผสมพื้นฐานบางอย่างหายไป (เช่น น้ำมัน เกลือ พริกไทย) สามารถใส่เพิ่มเติมได้`,
 
-            }
+      en: `You are a helpful cooking assistant. Create a delicious recipe using these ingredients: ${ingredients.trim()}
+
+Please format your response exactly like this:
+
+**Menu Name:** [Create a creative dish name]
+
+**Ingredients:**
+- [List all ingredients with quantities]
+
+**Instructions:**
+1. [Step 1]
+2. [Step 2]
+3. [Continue with numbered steps]
+
+**Cooking Time:** [Prep time and cooking time]
+
+Make this recipe realistic and delicious. If some basic ingredients are missing (like oil, salt, pepper), you can add them as needed.`
+    };
+
+    const selectedPrompt = prompts[language] || prompts['en'];
+
+    const postData = JSON.stringify({
+      contents: [
+        {
+          parts: [
+            { text: selectedPrompt }
           ]
         }
       ],
