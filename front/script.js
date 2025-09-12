@@ -460,10 +460,10 @@ function resetRecipeForm() {
               ${isUpdated ? `• ${translations.updated || 'Updated'}: ${updatedDate}` : ''}
             </div>
             <div class="recipe-buttons">
-              <button class="btn btn-secondary btn-small" onclick="editRecipe(${recipe.id})" title="${translations.edit_recipe_button || 'Edit Recipe'}">
+              <button class="btn btn-secondary btn-small edit-btn" data-recipe-id="${recipe.id}" title="${translations.edit_recipe_button || 'Edit Recipe'}">
                 ✏️ ${translations.edit || 'Edit'}
               </button>
-              <button class="btn btn-danger btn-small" onclick="deleteRecipe(${recipe.id})" title="${translations.delete_recipe_button || 'Delete Recipe'}">
+              <button class="btn btn-danger btn-small delete-btn" data-recipe-id="${recipe.id}" title="${translations.delete_recipe_button || 'Delete Recipe'}">
                 🗑️ ${translations.delete || 'Delete'}
               </button>
             </div>
@@ -475,6 +475,24 @@ function resetRecipeForm() {
               modalManager.showModal(recipe);
             }
           });
+
+          // Add event listeners for edit and delete buttons
+          const editBtn = recipeCard.querySelector('.edit-btn');
+          const deleteBtn = recipeCard.querySelector('.delete-btn');
+          
+          if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              editRecipe(recipe.id);
+            });
+          }
+          
+          if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              deleteRecipe(recipe.id);
+            });
+          }
 
           // Add hover effect
           recipeCard.addEventListener('mouseenter', () => {
