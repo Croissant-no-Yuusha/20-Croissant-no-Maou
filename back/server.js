@@ -9,10 +9,13 @@ dotenv.config();
 
 import { StorageFactory, connectToMongoDB, Recipe } from './storage.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../front')));
+app.use(express.static(join(__dirname, '../front')));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -26,7 +29,7 @@ const MODEL = process.env.MODEL;
 const STORAGE_TYPE = process.env.STORAGE_TYPE || 'json';
 let MONGODB_URI =
   process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager';
-const RECIPES_FILE = path.join(__dirname, 'recipes.json');
+const RECIPES_FILE = join(__dirname, 'recipes.json');
 
 // Initialize storage
 let storage;
@@ -396,7 +399,7 @@ Make this recipe realistic and delicious. If some basic ingredients are missing 
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT | 3000;
