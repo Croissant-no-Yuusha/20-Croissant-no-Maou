@@ -18,9 +18,205 @@ app.use((req, res, next) => {
 
 const API_KEY = process.env.API_KEY;
 const MODEL = process.env.MODEL;
+const STORAGE_TYPE = process.env.STORAGE_TYPE || 'json';
+
+// MongoDB setup
+let Recipe = null;
+if (STORAGE_TYPE === 'mongodb') {
+  const { Recipe: MongoRecipe, connectToMongoDB } = require('./database');
+  Recipe = MongoRecipe;
+  
+  // Connect to MongoDB on startup
+  connectToMongoDB().then(connected => {
+    if (!connected) {
+      console.warn('⚠️  MongoDB connection failed, falling back to JSON storage');
+      // Could fall back to JSON storage here if needed
+    }
+  });
+}
 
 const RECIPES_FILE = path.join(__dirname, 'recipes.json');
 
+// ======================
+// 📦 Storage Abstraction Layer
+// ======================
+
+// Generic storage functions that work with both JSON and MongoDB
+async function getAllRecipes() {
+  if (STORAGE_TYPE === 'mongodb' && Recipe) {
+    try {
+      const recipes = await Recipe.find({}).sort({ createdAt: -1 });
+      return recipes.map(recipe => ({
+        id: recipe._id.toString(),
+        title: recipe.title,
+        instructions: recipe.instructions,
+        ingredients: recipe.ingredients,
+        created_at: recipe.createdAt || recipe.created_at,
+        updated_at: recipe.updatedAt || recipe.updated_at,
+        is_ai_generated: recipe.is_ai_generated,
+        source: recipe.source,
+        tags: recipe.tags,
+        difficulty: recipe.difficulty,
+        prep_time: recipe.prep_time,
+        cook_time: recipe.cook_time,
+        servings: recipe.servings
+      }));
+    } catch (error) {
+      console.error('MongoDB read error:', error);
+      return [];
+    }
+  } else {
+    return readRecipes();
+  }
+}
+
+async function getRecipeById(id) {
+  if (STORAGE_TYPE === 'mongodb' && Recipe) {
+    try {
+      const recipe = await Recipe.findById(id);
+      if (!recipe) return null;
+      
+      return {
+        id: recipe._id.toString(),
+        title: recipe.title,
+        instructions: recipe.instructions,
+        ingredients: recipe.ingredients,
+        created_at: recipe.createdAt || recipe.created_at,
+        updated_at: recipe.updatedAt || recipe.updated_at,
+        is_ai_generated: recipe.is_ai_generated,
+        source: recipe.source,
+        tags: recipe.tags,
+        difficulty: recipe.difficulty,
+        prep_time: recipe.prep_time,
+        cook_time: recipe.cook_time,
+        servings: recipe.servings
+      };
+    } catch (error) {
+      console.error('MongoDB findById error:', error);
+      return null;
+    }
+  } else {
+    const recipes = readRecipes();
+    return recipes.find(r => r.id === parseInt(id));
+  }
+}
+
+async function createRecipe(recipeData) {
+  if (STORAGE_TYPE === 'mongodb' && Recipe) {
+    try {
+      const recipe = new Recipe(recipeData);
+      const saved = await recipe.save();
+      
+      return {
+        id: saved._id.toString(),
+        title: saved.title,
+        instructions: saved.instructions,
+        ingredients: saved.ingredients,
+        created_at: saved.createdAt,
+        updated_at: saved.updatedAt,
+        is_ai_generated: saved.is_ai_generated,
+        source: saved.source,
+        tags: saved.tags,
+        difficulty: saved.difficulty,
+        prep_time: saved.prep_time,
+        cook_time: saved.cook_time,
+        servings: saved.servings
+      };
+    } catch (error) {
+      console.error('MongoDB create error:', error);
+      throw error;
+    }
+  } else {
+    const recipes = readRecipes();
+    const recipe = {
+      ...recipeData,
+      id: getNextId(recipes),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    recipes.push(recipe);
+    if (writeRecipes(recipes)) {
+      return recipe;
+    } else {
+      throw new Error('Failed to save recipe to JSON file');
+    }
+  }
+}
+
+async function updateRecipe(id, updateData) {
+  if (STORAGE_TYPE === 'mongodb' && Recipe) {
+    try {
+      const updated = await Recipe.findByIdAndUpdate(
+        id, 
+        { ...updateData, updatedAt: new Date() },
+        { new: true, runValidators: true }
+      );
+      
+      if (!updated) return null;
+      
+      return {
+        id: updated._id.toString(),
+        title: updated.title,
+        instructions: updated.instructions,
+        ingredients: updated.ingredients,
+        created_at: updated.createdAt,
+        updated_at: updated.updatedAt,
+        is_ai_generated: updated.is_ai_generated,
+        source: updated.source,
+        tags: updated.tags,
+        difficulty: updated.difficulty,
+        prep_time: updated.prep_time,
+        cook_time: updated.cook_time,
+        servings: updated.servings
+      };
+    } catch (error) {
+      console.error('MongoDB update error:', error);
+      throw error;
+    }
+  } else {
+    const recipes = readRecipes();
+    const recipeIndex = recipes.findIndex(r => r.id === parseInt(id));
+    
+    if (recipeIndex === -1) return null;
+    
+    recipes[recipeIndex] = {
+      ...recipes[recipeIndex],
+      ...updateData,
+      updated_at: new Date().toISOString()
+    };
+    
+    if (writeRecipes(recipes)) {
+      return recipes[recipeIndex];
+    } else {
+      throw new Error('Failed to update recipe in JSON file');
+    }
+  }
+}
+
+async function deleteRecipe(id) {
+  if (STORAGE_TYPE === 'mongodb' && Recipe) {
+    try {
+      const deleted = await Recipe.findByIdAndDelete(id);
+      return deleted !== null;
+    } catch (error) {
+      console.error('MongoDB delete error:', error);
+      throw error;
+    }
+  } else {
+    const recipes = readRecipes();
+    const recipeIndex = recipes.findIndex(r => r.id === parseInt(id));
+    
+    if (recipeIndex === -1) return false;
+    
+    recipes.splice(recipeIndex, 1);
+    return writeRecipes(recipes);
+  }
+}
+
+// ======================
+// 📁 JSON File Functions (fallback)
+// ======================
 
 function readRecipes() {
   try {
@@ -51,7 +247,7 @@ function getNextId(recipes) {
 // ======================
 
 // Create recipe
-app.post("/recipes", (req, res) => {
+app.post("/recipes", async (req, res) => {
   try {
     const { 
       title, 
@@ -70,14 +266,10 @@ app.post("/recipes", (req, res) => {
       return res.status(400).json({ error: "Title and instructions are required" });
     }
 
-    const recipes = readRecipes();
-    const recipe = {
-      id: getNextId(recipes),
+    const recipeData = {
       title: title.trim(),
       instructions: instructions.trim(),
       ingredients: ingredients ? ingredients.trim() : "",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
       is_ai_generated: Boolean(is_ai_generated),
       source: source.trim(),
       tags: Array.isArray(tags) ? tags : [],
@@ -87,13 +279,9 @@ app.post("/recipes", (req, res) => {
       servings: Number(servings) || 1
     };
 
-    recipes.push(recipe);
+    const recipe = await createRecipe(recipeData);
+    res.json(recipe);
     
-    if (writeRecipes(recipes)) {
-      res.json(recipe);
-    } else {
-      res.status(500).json({ error: "Failed to save recipe" });
-    }
   } catch (error) {
     console.error("Create recipe error:", error);
     res.status(500).json({ error: "Failed to create recipe" });
@@ -101,10 +289,9 @@ app.post("/recipes", (req, res) => {
 });
 
 // Read all recipes
-app.get("/recipes", (req, res) => {
+app.get("/recipes", async (req, res) => {
   try {
-    const recipes = readRecipes();
-    recipes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const recipes = await getAllRecipes();
     res.json(recipes);
   } catch (error) {
     console.error("Read recipes error:", error);
@@ -113,11 +300,10 @@ app.get("/recipes", (req, res) => {
 });
 
 // Read single recipe
-app.get("/recipes/:id", (req, res) => {
+app.get("/recipes/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    const recipes = readRecipes();
-    const recipe = recipes.find(r => r.id === id);
+    const id = req.params.id;
+    const recipe = await getRecipeById(id);
     
     if (!recipe) {
       return res.status(404).json({ error: "Recipe not found" });
@@ -131,13 +317,15 @@ app.get("/recipes/:id", (req, res) => {
 });
 
 // Update recipe
-app.put("/recipes/:id", (req, res) => {
+app.put("/recipes/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
     const { 
       title, 
       instructions, 
       ingredients,
+      is_ai_generated,
+      source,
       tags,
       difficulty,
       prep_time,
@@ -149,32 +337,28 @@ app.put("/recipes/:id", (req, res) => {
       return res.status(400).json({ error: "Title and instructions are required" });
     }
 
-    const recipes = readRecipes();
-    const recipeIndex = recipes.findIndex(r => r.id === id);
-    
-    if (recipeIndex === -1) {
-      return res.status(404).json({ error: "Recipe not found" });
-    }
-
-    recipes[recipeIndex] = {
-      ...recipes[recipeIndex],
+    const updateData = {
       title: title.trim(),
       instructions: instructions.trim(),
       ingredients: ingredients ? ingredients.trim() : "",
-      updated_at: new Date().toISOString(),
-      // Update optional fields if provided
-      ...(tags !== undefined && { tags: Array.isArray(tags) ? tags : [] }),
-      ...(difficulty !== undefined && { difficulty: difficulty.trim() }),
-      ...(prep_time !== undefined && { prep_time: Number(prep_time) || 0 }),
-      ...(cook_time !== undefined && { cook_time: Number(cook_time) || 0 }),
-      ...(servings !== undefined && { servings: Number(servings) || 1 })
     };
 
-    if (writeRecipes(recipes)) {
-      res.json(recipes[recipeIndex]);
-    } else {
-      res.status(500).json({ error: "Failed to update recipe" });
+    // Add optional fields if provided
+    if (is_ai_generated !== undefined) updateData.is_ai_generated = Boolean(is_ai_generated);
+    if (source !== undefined) updateData.source = source.trim();
+    if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
+    if (difficulty !== undefined) updateData.difficulty = difficulty.trim();
+    if (prep_time !== undefined) updateData.prep_time = Number(prep_time) || 0;
+    if (cook_time !== undefined) updateData.cook_time = Number(cook_time) || 0;
+    if (servings !== undefined) updateData.servings = Number(servings) || 1;
+
+    const recipe = await updateRecipe(id, updateData);
+    
+    if (!recipe) {
+      return res.status(404).json({ error: "Recipe not found" });
     }
+
+    res.json(recipe);
   } catch (error) {
     console.error("Update recipe error:", error);
     res.status(500).json({ error: "Failed to update recipe" });
@@ -182,23 +366,16 @@ app.put("/recipes/:id", (req, res) => {
 });
 
 // Delete recipe
-app.delete("/recipes/:id", (req, res) => {
+app.delete("/recipes/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    const recipes = readRecipes();
-    const recipeIndex = recipes.findIndex(r => r.id === id);
+    const id = req.params.id;
+    const success = await deleteRecipe(id);
     
-    if (recipeIndex === -1) {
+    if (!success) {
       return res.status(404).json({ error: "Recipe not found" });
     }
 
-    recipes.splice(recipeIndex, 1);
-    
-    if (writeRecipes(recipes)) {
-      res.json({ success: true, message: "Recipe deleted successfully" });
-    } else {
-      res.status(500).json({ error: "Failed to delete recipe" });
-    }
+    res.json({ success: true, message: "Recipe deleted successfully" });
   } catch (error) {
     console.error("Delete recipe error:", error);
     res.status(500).json({ error: "Failed to delete recipe" });

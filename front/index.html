@@ -88,6 +88,14 @@
           <textarea id="instructions" data-translate-placeholder="instructions_placeholder" placeholder="Enter step-by-step cooking instructions" required></textarea>
         </div>
         
+        <div class="form-group" id="aiStatusGroup" style="display: none;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="isAiGenerated">
+            <span class="checkmark"></span>
+            <span data-translate="ai_generated">🤖 AI Generated Recipe</span>
+          </label>
+        </div>
+        
         <div class="form-buttons">
           <button type="submit" class="btn btn-primary" id="saveBtn">
             <img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy">

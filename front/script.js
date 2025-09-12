@@ -423,20 +423,31 @@ function updateStats() {
         const url = id ? `${API_URL}/recipes/${id}` : `${API_URL}/recipes`;
         const method = id ? "PUT" : "POST";
 
-        // Check if this is an AI-generated recipe (based on form title)
-        const formTitle = document.getElementById("formTitle").textContent;
-        const isAiGenerated = formTitle.includes("AI") || formTitle.includes("ai");
-        
+        // Prepare request body - include AI flags for both new and edited recipes
         const requestBody = { 
           title, 
           instructions, 
-          ingredients,
-          ...(isAiGenerated && {
-            is_ai_generated: true,
-            source: 'ai_gemini',
-            tags: ['ai-generated']
-          })
+          ingredients
         };
+
+        // If editing, preserve or allow updating AI status
+        if (id) {
+          // For editing, check if user wants to change AI status
+          const isAiCheckbox = document.getElementById("isAiGenerated");
+          if (isAiCheckbox) {
+            requestBody.is_ai_generated = isAiCheckbox.checked;
+            requestBody.source = isAiCheckbox.checked ? 'ai_gemini' : 'manual';
+          }
+        } else {
+          // For new recipes, check if it's from AI generation
+          const formTitle = document.getElementById("formTitle").textContent;
+          const isAiGenerated = formTitle.includes("AI") || formTitle.includes("ai");
+          if (isAiGenerated) {
+            requestBody.is_ai_generated = true;
+            requestBody.source = 'ai_gemini';
+            requestBody.tags = ['ai-generated'];
+          }
+        }
 
         const res = await fetch(url, {
           method,
@@ -485,6 +496,13 @@ function updateStats() {
       document.getElementById("instructions").value = "";
       document.getElementById("recipeIngredients").value = "";
       
+      // Hide AI status checkbox
+      const aiStatusGroup = document.getElementById("aiStatusGroup");
+      if (aiStatusGroup) {
+        aiStatusGroup.style.display = "none";
+        document.getElementById("isAiGenerated").checked = false;
+      }
+      
       const lang = localStorage.getItem('language') || 'en';
       const translations = themeManager.getTranslations(lang);
       document.getElementById("formTitle").textContent = translations.add_new_recipe || "Add New Recipe";
@@ -502,6 +520,14 @@ function updateStats() {
         document.getElementById("title").value = recipe.title;
         document.getElementById("instructions").value = recipe.instructions;
         document.getElementById("recipeIngredients").value = recipe.ingredients || "";
+        
+        // Show and set AI status checkbox
+        const aiStatusGroup = document.getElementById("aiStatusGroup");
+        const isAiCheckbox = document.getElementById("isAiGenerated");
+        if (aiStatusGroup && isAiCheckbox) {
+          aiStatusGroup.style.display = "block";
+          isAiCheckbox.checked = recipe.is_ai_generated || false;
+        }
         
         const lang = localStorage.getItem('language') || 'en';
         const translations = themeManager.getTranslations(lang);

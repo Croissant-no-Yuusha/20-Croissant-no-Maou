@@ -433,6 +433,36 @@ textarea {
   line-height: 1.5;
 }
 
+/* Checkbox Styles */
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0 !important;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  transition: var(--transition);
+}
+
+.checkbox-label:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-secondary);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.75rem;
+  accent-color: var(--primary-color);
+}
+
+.checkmark {
+  margin-left: 0.5rem;
+}
+
 /* Search Container */
 .search-container {
   position: relative;
