@@ -249,6 +249,60 @@ function updateStats() {
   // This function kept for compatibility but loadRecipes() handles the counts
 }
 
+// Helper function to reset the recipe form completely
+function resetRecipeForm() {
+  try {
+    // Clear all form fields
+    document.getElementById("recipeId").value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("instructions").value = "";
+    document.getElementById("recipeIngredients").value = "";
+    
+    // Get current language translations
+    const lang = localStorage.getItem('language') || 'en';
+    const translations = themeManager.getTranslations(lang);
+    
+    // Reset form title
+    document.getElementById("formTitle").textContent = translations.add_new_recipe || "Add New Recipe";
+    
+    // Hide cancel button
+    const cancelBtn = document.getElementById("cancelBtn");
+    if (cancelBtn) {
+      cancelBtn.style.display = "none";
+    }
+    
+    // Hide and reset AI status checkbox if it exists
+    const aiStatusGroup = document.getElementById("aiStatusGroup");
+    if (aiStatusGroup) {
+      aiStatusGroup.style.display = "none";
+    }
+    
+    const isAiCheckbox = document.getElementById("isAiGenerated");
+    if (isAiCheckbox) {
+      isAiCheckbox.checked = false;
+    }
+    
+    // Reset save button to default state
+    const saveBtn = document.getElementById("saveBtn");
+    if (saveBtn) {
+      saveBtn.innerHTML = `<img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy"><span>${translations.save_recipe || "Save Recipe"}</span>`;
+      saveBtn.disabled = false;
+      saveBtn.classList.remove('loading'); // Remove any loading classes
+    }
+    
+    // Reset form state
+    const form = document.getElementById("recipeForm");
+    if (form) {
+      form.classList.remove('editing-mode');
+      form.classList.remove('loading'); // Remove any loading classes
+    }
+    
+    console.log('Form reset successfully');
+  } catch (error) {
+    console.error('Error resetting form:', error);
+  }
+}
+
     const searchInput = document.getElementById("searchRecipes");
 
     searchInput.addEventListener("input", () => {
@@ -400,11 +454,14 @@ function updateStats() {
 
     document.getElementById("recipeForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      console.log('Form submission started');
       
       const id = document.getElementById("recipeId").value;
       const title = document.getElementById("title").value.trim();
       const instructions = document.getElementById("instructions").value.trim();
       const ingredients = document.getElementById("recipeIngredients").value.trim();
+      
+      console.log('Form data:', { id, title: title.substring(0, 20), hasInstructions: !!instructions });
 
       if (!title || !instructions) {
         const lang = localStorage.getItem('language') || 'en';
@@ -413,28 +470,32 @@ function updateStats() {
         return;
       }
 
+      const saveBtn = document.getElementById("saveBtn");
+      let isEditing = !!id;
+
       try {
-        const saveBtn = document.getElementById("saveBtn");
         const lang1 = localStorage.getItem('language') || 'en';
         const trans1 = themeManager.getTranslations(lang1);
-        saveBtn.textContent = trans1.saving || "Saving...";
+        
+        // Set loading state
+        saveBtn.innerHTML = `<span>${isEditing ? (trans1.updating || "Updating...") : (trans1.saving || "Saving...")}</span>`;
         saveBtn.disabled = true;
 
-        const url = id ? `${API_URL}/recipes/${id}` : `${API_URL}/recipes`;
+        const url = `${API_URL}/recipes${id ? '/' + id : ''}`;
         const method = id ? "PUT" : "POST";
 
-        // Prepare request body - include AI flags for both new and edited recipes
+        // Prepare request body
         const requestBody = { 
           title, 
           instructions, 
           ingredients
         };
 
-        // If editing, preserve or allow updating AI status
+        // Handle AI status for editing
         if (id) {
           // For editing, check if user wants to change AI status
           const isAiCheckbox = document.getElementById("isAiGenerated");
-          if (isAiCheckbox) {
+          if (isAiCheckbox && isAiCheckbox.parentElement.style.display !== 'none') {
             requestBody.is_ai_generated = isAiCheckbox.checked;
             requestBody.source = isAiCheckbox.checked ? 'ai_gemini' : 'manual';
           }
@@ -455,58 +516,43 @@ function updateStats() {
           body: JSON.stringify(requestBody)
         });
 
-        if (!res.ok) throw new Error('Failed to save recipe');
+        const result = await res.json();
 
-        document.getElementById("recipeId").value = "";
-        document.getElementById("title").value = "";
-        document.getElementById("instructions").value = "";
-        document.getElementById("recipeIngredients").value = "";
-        
-        const langReset = localStorage.getItem('language') || 'en';
-        const transReset = themeManager.getTranslations(langReset);
-        document.getElementById("formTitle").textContent = transReset.add_new_recipe || "Add New Recipe";
-        document.getElementById("cancelBtn").style.display = "none";
-        
-        await loadRecipes();
-        
+        if (!res.ok) {
+          throw new Error(result.error || 'Failed to save recipe');
+        }
+
+        // Show success message first
         const lang2 = localStorage.getItem('language') || 'en';
         const trans2 = themeManager.getTranslations(lang2);
-        const successMsg = id 
+        const successMsg = isEditing 
           ? (trans2.recipe_updated_success || "Recipe updated successfully!")
           : (trans2.recipe_saved_success || "Recipe saved successfully!");
         notificationManager.show(successMsg, 'success');
+
+        // Reset form completely (this will also reset the button)
+        resetRecipeForm();
+        
+        // Reload recipes
+        await loadRecipes();
 
       } catch (error) {
         console.error('Error saving recipe:', error);
         const lang3 = localStorage.getItem('language') || 'en';
         const trans3 = themeManager.getTranslations(lang3);
-        notificationManager.show(trans3.recipe_save_failed || 'Failed to save recipe. Please try again.', 'error');
-      } finally {
-        const saveBtn = document.getElementById("saveBtn");
-        const lang4 = localStorage.getItem('language') || 'en';
-        const trans4 = themeManager.getTranslations(lang4);
-        saveBtn.innerHTML = `<img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy"><span>${trans4.save_recipe || "Save Recipe"}</span>`;
+        const errorMsg = error.message || trans3.recipe_save_failed || 'Failed to save recipe. Please try again.';
+        notificationManager.show(errorMsg, 'error');
+        
+        // On error, restore button state manually
+        const lang = localStorage.getItem('language') || 'en';
+        const translations = themeManager.getTranslations(lang);
+        saveBtn.innerHTML = `<img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy"><span>${isEditing ? (translations.update_recipe || "Update Recipe") : (translations.save_recipe || "Save Recipe")}</span>`;
         saveBtn.disabled = false;
       }
     });
 
     document.getElementById("cancelBtn").addEventListener("click", () => {
-      document.getElementById("recipeId").value = "";
-      document.getElementById("title").value = "";
-      document.getElementById("instructions").value = "";
-      document.getElementById("recipeIngredients").value = "";
-      
-      // Hide AI status checkbox
-      const aiStatusGroup = document.getElementById("aiStatusGroup");
-      if (aiStatusGroup) {
-        aiStatusGroup.style.display = "none";
-        document.getElementById("isAiGenerated").checked = false;
-      }
-      
-      const lang = localStorage.getItem('language') || 'en';
-      const translations = themeManager.getTranslations(lang);
-      document.getElementById("formTitle").textContent = translations.add_new_recipe || "Add New Recipe";
-      document.getElementById("cancelBtn").style.display = "none";
+      resetRecipeForm();
     });
 
     async function editRecipe(id) {
@@ -533,6 +579,11 @@ function updateStats() {
         const translations = themeManager.getTranslations(lang);
         document.getElementById("formTitle").textContent = translations.edit_recipe || "Edit Recipe";
         document.getElementById("cancelBtn").style.display = "inline-block";
+        
+        // Update save button text for editing mode
+        const saveBtn = document.getElementById("saveBtn");
+        saveBtn.innerHTML = `<img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy"><span>${translations.update_recipe || "Update Recipe"}</span>`;
+        saveBtn.disabled = false;
         
         document.getElementById("recipeForm").scrollIntoView({ behavior: 'smooth' });
       } catch (error) {
