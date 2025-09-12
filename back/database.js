@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Recipe Schema for MongoDB
 const recipeSchema = new mongoose.Schema(
@@ -126,8 +126,4 @@ async function migrateJsonToMongoDB(jsonFilePath) {
   }
 }
 
-module.exports = {
-  Recipe,
-  connectToMongoDB,
-  migrateJsonToMongoDB
-};
+export { Recipe, connectToMongoDB, migrateJsonToMongoDB };

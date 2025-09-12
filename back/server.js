@@ -1,10 +1,13 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import fs from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import https from 'https';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
-const { StorageFactory, connectToMongoDB, Recipe } = require('./storage');
+import { StorageFactory, connectToMongoDB, Recipe } from './storage.js';
 
 const app = express();
 
@@ -227,7 +230,6 @@ app.post('/ai-suggest', (req, res) => {
     });
   }
 
-  const https = require('https');
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
   // Create language-specific prompts

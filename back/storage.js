@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const mongoose = require('mongoose');
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { connect, Schema, model } from 'mongoose';
 
 // Base Storage class defining the interface
 class Storage {
@@ -306,7 +306,7 @@ class StorageFactory {
   }
 }
 
-module.exports = {
+export {
   Storage,
   MongoDBStorage,
   JSONStorage,
