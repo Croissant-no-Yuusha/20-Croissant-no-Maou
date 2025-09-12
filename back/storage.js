@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { connect, Schema, model } from 'mongoose';
+import { Recipe } from './database.js';
 
 // Base Storage class defining the interface
 class Storage {
@@ -244,38 +245,11 @@ class JSONStorage extends Storage {
   }
 }
 
-// MongoDB connection and schema
-let recipeSchema;
-let Recipe;
-
 const connectToMongoDB = (connectionString) => {
   console.log('Connecting to MongoDB ...');
   return connect(connectionString).then(
     () => {
       console.log('✅ MongoDB connected successfully');
-
-      // Define the recipe schema if it doesn't exist yet
-      if (!recipeSchema) {
-        recipeSchema = new Schema(
-          {
-            title: { type: String, required: true },
-            instructions: { type: String, required: true },
-            ingredients: { type: String, default: '' },
-            is_ai_generated: { type: Boolean, default: false },
-            source: { type: String, default: 'manual' },
-            tags: { type: [String], default: [] },
-            difficulty: { type: String, default: 'easy' },
-            prep_time: { type: Number, default: 0 },
-            cook_time: { type: Number, default: 0 },
-            servings: { type: Number, default: 1 }
-          },
-          { timestamps: true }
-        );
-
-        // Create the model if it doesn't exist
-        Recipe = model('Recipe', recipeSchema);
-      }
-
       return true;
     },
     (error) => {
@@ -309,6 +283,5 @@ export {
   MongoDBStorage,
   JSONStorage,
   StorageFactory,
-  connectToMongoDB,
-  Recipe
+  connectToMongoDB
 };

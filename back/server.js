@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { StorageFactory, connectToMongoDB, Recipe } from './storage.js';
+import { StorageFactory, connectToMongoDB } from './storage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,7 +40,7 @@ switch (STORAGE_TYPE) {
     await connectToMongoDB(MONGODB_URI).then((connected) => {
       if (connected) {
         console.log('Storage Type : MongoDB');
-        storage = StorageFactory.create('mongodb', { Recipe });
+        storage = StorageFactory.create('mongodb');
       } else {
         console.error('❌ MongoDB connection failed. Exiting server...');
         process.exit(1); // Exit the server with a failure code
