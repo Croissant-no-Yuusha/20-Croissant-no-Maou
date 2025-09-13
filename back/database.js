@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 
 // Recipe Schema for MongoDB
 const recipeSchema = new mongoose.Schema(
@@ -93,9 +95,6 @@ async function connectToMongoDB() {
 // Migration function to move from JSON to MongoDB
 async function migrateJsonToMongoDB(jsonFilePath) {
   try {
-    const fs = require('fs');
-    const path = require('path');
-
     // Read existing JSON data
     const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
 

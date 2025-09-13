@@ -11,8 +11,8 @@
  */
 
 require('dotenv').config();
-const { connectToMongoDB, migrateJsonToMongoDB } = require('./database');
-const path = require('path');
+import { connectToMongoDB, migrateJsonToMongoDB } from './database';
+import { resolve } from 'path';
 
 async function runMigration() {
   try {
@@ -35,7 +35,7 @@ async function runMigration() {
 
     // Get JSON file path
     const jsonFilePath = process.env.RECIPES_FILE_PATH || './recipes.json';
-    const fullPath = path.resolve(__dirname, jsonFilePath);
+    const fullPath = resolve(__dirname, jsonFilePath);
 
     console.log(`📁 Reading from: ${fullPath}`);
 
@@ -67,4 +67,4 @@ if (require.main === module) {
   runMigration();
 }
 
-module.exports = { runMigration };
+export default { runMigration };
