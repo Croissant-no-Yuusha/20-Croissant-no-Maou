@@ -66,8 +66,8 @@ npm start
 |----------|-------------|----------|---------|
 | `PORT` | Server port | No | 3039 |
 | `API_KEY` | AI API key for recipe generation | Yes* | - |
-| `MODEL` | AI model to use | No | gemini-2.0-flash |
-| `STORAGE_TYPE` | Storage backend (`json` or `mongodb`) | No | json |
+| `MODEL` | AI model to use | Yes | gemini-2.0-flash |
+| `STORAGE_TYPE` | Storage backend (`json` or `mongodb`) | Yes | json |
 | `RECIPES_FILE_PATH` | Path for JSON storage | No | ./recipes.json |
 | `MONGODB_URI` | MongoDB connection string | No** | - |
 | `MONGODB_DATABASE` | MongoDB database name | No** | recipe_manager |
