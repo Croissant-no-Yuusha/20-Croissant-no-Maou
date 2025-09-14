@@ -151,19 +151,6 @@ npm run migrate
 
 ## 🛠️ Development
 
-### Project Structure
-
-```
-20-Croissant-no-Maou/
-├── public/           # Static files
-├── src/             # Source code
-├── recipes.json     # JSON storage file
-├── server.js        # Main server file
-├── package.json     # Dependencies
-├── .env             # Environment variables
-└── README.md        # This file
-```
-
 ### Available Scripts
 
 - `npm start` - Start the development server
