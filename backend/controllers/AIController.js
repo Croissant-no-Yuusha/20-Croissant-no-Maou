@@ -20,11 +20,14 @@ class AIController {
         });
       }
 
-      const result = await this.aiService.generateRecipeSuggestion(ingredients, language);
+      const result = await this.aiService.generateRecipeSuggestion(
+        ingredients,
+        language
+      );
       res.json(result);
     } catch (error) {
       console.error('AI suggestion error:', error);
-      
+
       if (error.message === 'API key not configured') {
         return res.status(500).json({
           error: 'API key not configured',

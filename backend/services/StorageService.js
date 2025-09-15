@@ -161,7 +161,8 @@ class MongoDBStorage extends Storage {
 class JSONStorage extends Storage {
   constructor(recipesFilePath) {
     super();
-    this.recipesFile = recipesFilePath || join(process.cwd(), 'backend', 'data', 'recipes.json');
+    this.recipesFile =
+      recipesFilePath || join(process.cwd(), 'backend', 'data', 'recipes.json');
   }
 
   #readRecipes() {
@@ -263,9 +264,4 @@ class StorageFactory {
   }
 }
 
-export {
-  Storage,
-  MongoDBStorage,
-  JSONStorage,
-  StorageFactory
-};
+export { Storage, MongoDBStorage, JSONStorage, StorageFactory };

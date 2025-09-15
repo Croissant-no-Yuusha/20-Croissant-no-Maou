@@ -14,7 +14,9 @@ async function testConnection() {
   console.log('STORAGE_TYPE:', process.env.STORAGE_TYPE);
 
   try {
-    const connected = await connectToMongoDB(process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager');
+    const connected = await connectToMongoDB(
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager'
+    );
     if (connected) {
       console.log('✅ MongoDB connection successful!');
       console.log('📊 You can now use MongoDB storage');

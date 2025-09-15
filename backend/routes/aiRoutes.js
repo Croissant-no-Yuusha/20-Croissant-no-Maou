@@ -4,7 +4,9 @@ const createAIRoutes = (aiController) => {
   const router = Router();
 
   // AI suggestion route
-  router.post('/ai-suggest', (req, res) => aiController.generateRecipeSuggestion(req, res));
+  router.post('/ai-suggest', (req, res) =>
+    aiController.generateRecipeSuggestion(req, res)
+  );
 
   return router;
 };

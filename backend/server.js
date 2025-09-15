@@ -39,7 +39,8 @@ app.use((req, res, next) => {
 const API_KEY = process.env.API_KEY;
 const MODEL = process.env.MODEL;
 const STORAGE_TYPE = process.env.STORAGE_TYPE || 'json';
-let MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager';
+let MONGODB_URI =
+  process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager';
 const RECIPES_FILE = join(__dirname, 'data/recipes.json'); // Use recipes from new backend structure
 
 // Initialize storage

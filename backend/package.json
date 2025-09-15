@@ -12,7 +12,13 @@
     "check": "npx prettier . --check",
     "format": "npx prettier . --write"
   },
-  "keywords": ["recipe", "backend", "mvc", "express", "mongodb"],
+  "keywords": [
+    "recipe",
+    "backend",
+    "mvc",
+    "express",
+    "mongodb"
+  ],
   "author": "20-Croissant-no-Maou",
   "license": "ISC",
   "dependencies": {

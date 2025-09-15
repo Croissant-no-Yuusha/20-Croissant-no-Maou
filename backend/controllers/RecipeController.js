@@ -62,11 +62,11 @@ class RecipeController {
     try {
       const id = req.params.id;
       const recipe = await this.storage.getRecipeById(id);
-      
+
       if (!recipe) {
         return res.status(404).json({ error: 'Recipe not found' });
       }
-      
+
       res.json(recipe);
     } catch (error) {
       console.error('Read recipe error:', error);
@@ -109,16 +109,18 @@ class RecipeController {
       if (source !== undefined) updateData.source = source.trim();
       if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
       if (difficulty !== undefined) updateData.difficulty = difficulty.trim();
-      if (prep_time !== undefined) updateData.prep_time = Number(prep_time) || 0;
-      if (cook_time !== undefined) updateData.cook_time = Number(cook_time) || 0;
+      if (prep_time !== undefined)
+        updateData.prep_time = Number(prep_time) || 0;
+      if (cook_time !== undefined)
+        updateData.cook_time = Number(cook_time) || 0;
       if (servings !== undefined) updateData.servings = Number(servings) || 1;
 
       const recipe = await this.storage.updateRecipe(id, updateData);
-      
+
       if (!recipe) {
         return res.status(404).json({ error: 'Recipe not found' });
       }
-      
+
       res.json(recipe);
     } catch (error) {
       console.error('Update recipe error:', error);
@@ -131,11 +133,11 @@ class RecipeController {
     try {
       const id = req.params.id;
       const success = await this.storage.deleteRecipe(id);
-      
+
       if (!success) {
         return res.status(404).json({ error: 'Recipe not found' });
       }
-      
+
       res.json({ success: true, message: 'Recipe deleted successfully' });
     } catch (error) {
       console.error('Delete recipe error:', error);
