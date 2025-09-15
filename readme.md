@@ -58,7 +58,7 @@ A modern web application for managing your favorite recipes with AI-powered reci
 
 1. **Clone the repository:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Croissant-no-Yuusha/20-Croissant-no-Maou.git
 cd 20-Croissant-no-Maou
 ```
 
