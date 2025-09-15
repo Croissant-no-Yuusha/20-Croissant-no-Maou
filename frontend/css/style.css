@@ -19,7 +19,7 @@
   --bg-tertiary: #fff8f0;
   --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-header: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url("photos/waffle.jpg");
+  --bg-header: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url("../assets/waffle.jpg");
   
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
@@ -46,7 +46,7 @@
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
   --bg-card: rgba(30, 41, 59, 0.95);
-  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("photos/waffle.jpg");
+  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("../assets/waffle.jpg");
   
   --text-primary: #f8fafc;
   --text-secondary: #e2e8f0;

@@ -1,5 +1,5 @@
 // English (United States) translations
-const translations_en = {
+window.translations_en = {
   // Header & Navigation
   title: "AI Recipe Manager",
   subtitle: "Discover delicious recipes with AI assistance",

@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { connect, Schema, model } from 'mongoose';
-import { Recipe } from './database.js';
+import { Recipe } from '../models/Recipe.js';
 
 // Base Storage class defining the interface
 class Storage {
@@ -162,7 +161,7 @@ class MongoDBStorage extends Storage {
 class JSONStorage extends Storage {
   constructor(recipesFilePath) {
     super();
-    this.recipesFile = recipesFilePath || join(__dirname, 'recipes.json');
+    this.recipesFile = recipesFilePath || join(process.cwd(), 'backend', 'data', 'recipes.json');
   }
 
   #readRecipes() {
@@ -245,20 +244,6 @@ class JSONStorage extends Storage {
   }
 }
 
-const connectToMongoDB = (connectionString) => {
-  console.log('Connecting to MongoDB ...');
-  return connect(connectionString).then(
-    () => {
-      console.log('✅ MongoDB connected successfully');
-      return true;
-    },
-    (error) => {
-      console.error('❌ MongoDB connection error:', error);
-      return false;
-    }
-  );
-};
-
 // Storage Factory to create the appropriate storage instance
 class StorageFactory {
   static create(storageType, options = {}) {
@@ -282,6 +267,5 @@ export {
   Storage,
   MongoDBStorage,
   JSONStorage,
-  StorageFactory,
-  connectToMongoDB
+  StorageFactory
 };
