@@ -1,5 +1,5 @@
 // Thai (Thailand) translations
-const translations_th = {
+window.translations_th = {
   // Header & Navigation
   title: "ตัวจัดการสูตรอาหาร AI",
   subtitle: "ค้นพบสูตรอาหารอร่อยด้วยความช่วยเหลือของ AI",

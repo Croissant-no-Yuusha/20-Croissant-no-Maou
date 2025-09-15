@@ -31,17 +31,26 @@ export const languageManager = {
         element.placeholder = translations[key];
       }
     });
+    // Reload recipes to update dynamic content with new language
     if (typeof window.loadRecipes === 'function') {
       window.loadRecipes();
     }
   },
   getTranslations(lang) {
+    console.log('Getting translations for language:', lang);
+    console.log('Available translations_th:', typeof window.translations_th);
+    console.log('Available translations_en:', typeof window.translations_en);
+    
     switch(lang) {
       case 'th':
-        return typeof window.translations_th !== 'undefined' ? window.translations_th : {};
+        const thTranslations = typeof window.translations_th !== 'undefined' ? window.translations_th : {};
+        console.log('Thai translations keys:', Object.keys(thTranslations).length);
+        return thTranslations;
       case 'en':
       default:
-        return typeof window.translations_en !== 'undefined' ? window.translations_en : {};
+        const enTranslations = typeof window.translations_en !== 'undefined' ? window.translations_en : {};
+        console.log('English translations keys:', Object.keys(enTranslations).length);
+        return enTranslations;
     }
   }
 };

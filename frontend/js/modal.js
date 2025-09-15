@@ -1,4 +1,4 @@
-import { formatIngredientsForModal, formatInstructionsForModal } from './recipes.js';
+import { formatIngredientsForModal, formatInstructionsForModal } from './utils.js';
 import { languageManager } from './language.js';
 
 // Modal management
