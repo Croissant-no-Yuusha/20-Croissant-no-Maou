@@ -93,26 +93,3 @@ npm run migrate    # Migrate from JSON to MongoDB
 npm run check      # Check code formatting
 npm run format     # Format code with Prettier
 ```
-
-## Features
-
-✅ **Modern ES6+ Modules** - Uses import/export syntax throughout
-✅ **MVC Architecture** - Clean separation of concerns
-✅ **Storage Abstraction** - Supports both JSON file and MongoDB storage
-✅ **AI Integration** - Google Gemini API for recipe generation
-✅ **Error Handling** - Comprehensive error handling and logging
-✅ **Code Formatting** - Prettier configuration for consistent code style
-✅ **Environment Configuration** - Flexible environment-based setup
-
-## Migration from Old Structure
-
-The old `back/` directory structure has been reorganized as follows:
-
-- `back/server.js` → `backend/server.js` (main app, routes extracted)
-- `back/database.js` → `backend/config/database.js` + `backend/models/Recipe.js`
-- `back/storage.js` → `backend/services/StorageService.js`
-- AI logic → `backend/services/AIService.js` + `backend/controllers/AIController.js`
-- CRUD logic → `backend/controllers/RecipeController.js`
-- Route definitions → `backend/routes/`
-
-All functionality has been preserved while improving code organization and maintainability.
