@@ -161,7 +161,7 @@ class MongoDBStorage extends Storage {
 class JSONStorage extends Storage {
   constructor(recipesFilePath) {
     super();
-    this.recipesFile = recipesFilePath || join(process.cwd(), 'back', 'recipes.json');
+    this.recipesFile = recipesFilePath || join(process.cwd(), 'backend', 'data', 'recipes.json');
   }
 
   #readRecipes() {
