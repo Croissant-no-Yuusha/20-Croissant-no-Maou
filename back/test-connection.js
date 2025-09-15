@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
-const { connectToMongoDB } = require('./database');
+import dotenv from 'dotenv';
+import { connectToMongoDB } from './database.js';
+
+dotenv.config();
 
 async function testConnection() {
   console.log('🔍 Testing MongoDB connection...');
