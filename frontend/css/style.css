@@ -46,7 +46,7 @@
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
   --bg-card: rgba(30, 41, 59, 0.95);
-  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("photos/waffle.jpg");
+  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("../assets/waffle.jpg");
   
   --text-primary: #f8fafc;
   --text-secondary: #e2e8f0;
