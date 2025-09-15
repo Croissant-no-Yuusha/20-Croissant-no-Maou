@@ -6,17 +6,18 @@ import {
   loadRecipes, 
   editRecipe, 
   deleteRecipe, 
-  resetRecipeForm, 
-  setApiUrl,
+  resetRecipeForm,
   initializeSearch
 } from './recipes.js';
-import { aiSuggest } from './api.js';
-import { saveRecipe } from './api.js';
+import { aiSuggest, saveRecipe, getApiUrl, setApiUrl } from './api.js';
 import { addLoadingStates, lazyLoadImages } from './utils.js';
 
-// Global configuration
-const API_URL = "";
-setApiUrl(API_URL);
+// Global configuration - Set to empty string for same-origin requests
+// If you need to use a different URL, uncomment and modify the line below:
+// setApiUrl("https://recipe.aimlxv.me");
+
+// Log current API URL for debugging
+console.log('Current API URL:', getApiUrl());
 
 // Make functions available globally for HTML onclick handlers
 window.editRecipe = editRecipe;
@@ -79,7 +80,7 @@ document.getElementById("recipeForm").addEventListener("submit", async (e) => {
       }
     }
 
-    const result = await saveRecipe(API_URL, id, requestBody);
+    const result = await saveRecipe(id, requestBody);
 
     // Show success message first
     const lang2 = localStorage.getItem('language') || 'en';
@@ -142,7 +143,7 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
     const currentLang = localStorage.getItem('language') || 'en';
     console.log(`🌐 Frontend sending language: ${currentLang}`);
     
-    const data = await aiSuggest(API_URL, ingredients, currentLang);
+    const data = await aiSuggest(ingredients, currentLang);
     console.log('🎯 AI Response received:', { hasData: !!data, hasSuggestion: !!data.suggestion });
     
     let suggestion = data.suggestion || "No recipe suggestion received from the server.";

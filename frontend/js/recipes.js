@@ -1,11 +1,10 @@
-import { fetchRecipes, fetchRecipe, saveRecipe, deleteRecipe as apiDeleteRecipe } from './api.js';
+import { fetchRecipes, fetchRecipe, saveRecipe, deleteRecipe as apiDeleteRecipe, getApiUrl } from './api.js';
 import { languageManager } from './language.js';
 import { modalManager, showConfirmationModal } from './modal.js';
 import { notificationManager } from './notification.js';
 import { formatIngredientsForCard, formatIngredientsForModal, formatInstructionsForCard, formatInstructionsForModal } from './utils.js';
 
 // Global variables
-let API_URL = "";
 let aiSuggestionCount = parseInt(localStorage.getItem('aiSuggestionCount')) || 0;
 
 // Recipe-related functionality (formatting functions moved to utils.js)
@@ -66,7 +65,7 @@ export function resetRecipeForm() {
 
 export async function loadRecipes() {
   try {
-    const recipes = await fetchRecipes(API_URL);
+    const recipes = await fetchRecipes();
     const list = document.getElementById("recipesList");
     
     // Update counters
@@ -185,7 +184,7 @@ export async function loadRecipes() {
 
 export async function editRecipe(id) {
   try {
-    const recipe = await fetchRecipe(API_URL, id);
+    const recipe = await fetchRecipe(id);
     
     document.getElementById("recipeId").value = recipe.id;
     document.getElementById("title").value = recipe.title;
@@ -223,7 +222,7 @@ export async function deleteRecipe(id) {
   if (!confirmed) return;
   
   try {
-    await apiDeleteRecipe(API_URL, id);
+    await apiDeleteRecipe(id);
     await loadRecipes();
     const lang = localStorage.getItem('language') || 'en';
     const translations = languageManager.getTranslations(lang);
@@ -320,11 +319,6 @@ export function initializeSearch() {
       noResults.remove();
     }
   });
-}
-
-// Set API URL
-export function setApiUrl(url) {
-  API_URL = url;
 }
 
 // Export updateStats for compatibility
