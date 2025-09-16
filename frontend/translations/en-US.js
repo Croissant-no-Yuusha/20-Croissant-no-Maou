@@ -31,7 +31,7 @@ window.translations_en = {
   cancel: "Cancel",
   
   // Recipe Collection
-  recipe_collection: "My Recipe Collection",
+  recipe_collection: "Recipe Collection",
   search_placeholder: "🔍 Search recipes by title or ingredients...",
   no_recipes: "No recipes yet",
   no_recipes_desc: "Generate your first recipe with AI or add one manually!",

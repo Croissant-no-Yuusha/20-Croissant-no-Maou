@@ -12,10 +12,6 @@ import {
 import { aiSuggest, saveRecipe, getApiUrl, setApiUrl } from './api.js';
 import { addLoadingStates, lazyLoadImages } from './utils.js';
 
-// Global configuration - Set to empty string for same-origin requests
-// If you need to use a different URL, uncomment and modify the line below:
-// setApiUrl("https://recipe.aimlxv.me");
-
 // Log current API URL for debugging
 console.log('Current API URL:', getApiUrl());
 

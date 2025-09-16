@@ -39,12 +39,14 @@ backend/
 ### MVC Architecture with Service Layer
 
 **Design Principles:**
+
 - **Models**: Data structures and validation (Mongoose schemas)
 - **Views**: JSON API responses
 - **Controllers**: Request/response handling and coordination
 - **Services**: Business logic and external integrations
 
 **Key Features:**
+
 - **Storage Abstraction**: Seamless switching between JSON and MongoDB
 - **Error Handling**: Centralized error management
 - **Input Validation**: Multi-layer validation system
@@ -53,18 +55,21 @@ backend/
 ### Component Details
 
 #### Controllers (`controllers/`)
+
 - Handle HTTP requests and responses
 - Input validation and sanitization
 - Service coordination
 - Response formatting and status codes
 
 #### Models (`models/`)
+
 - MongoDB schema definitions (Mongoose)
 - Data validation rules
 - Default values and computed fields
 - Database indexes for performance
 
 #### Services (`services/`)
+
 - **StorageService**: Data persistence abstraction
 - **AIService**: External AI API integration
 - Business logic implementation
