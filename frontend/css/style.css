@@ -19,7 +19,7 @@
   --bg-tertiary: #fff8f0;
   --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-header: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url("photos/waffle.jpg");
+  --bg-header: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url("../assets/waffle.jpg");
   
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
@@ -46,7 +46,7 @@
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
   --bg-card: rgba(30, 41, 59, 0.95);
-  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("photos/waffle.jpg");
+  --bg-header: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0.4)), url("../assets/waffle.jpg");
   
   --text-primary: #f8fafc;
   --text-secondary: #e2e8f0;
@@ -433,6 +433,100 @@ textarea {
   line-height: 1.5;
 }
 
+/* Form row layout for side-by-side fields */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.form-group-half {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Number input styling */
+input[type="number"] {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+input[type="number"]:hover {
+  border-color: var(--border-hover);
+}
+
+/* Select dropdown styling */
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6,9 12,15 18,9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Default value styling */
+#difficulty option[selected],
+#servings[value="1"] {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Placeholder styling for default hints */
+input[placeholder*="Default"],
+select option[data-translate*="default"] {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Form help text styling */
+.form-help {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.form-help::before {
+  content: '';
+  margin-right: 0.25rem;
+}
+
+/* Responsive adjustments for form rows */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-group-half {
+    margin-bottom: 1.75rem;
+  }
+  
+  .form-group-half:last-child {
+    margin-bottom: 0;
+  }
+}
+
 /* Checkbox Styles */
 .checkbox-label {
   display: flex !important;
@@ -740,6 +834,40 @@ textarea {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+/* Recipe Tags */
+.recipe-tags {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.recipe-tags strong {
+  color: var(--text-primary);
+  margin-right: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-right: 0.5rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.tag:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 /* Modal Styles */
@@ -1157,6 +1285,17 @@ html {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-tags .tag {
+  margin: 0;
 }
 
 .modal-ingredients {

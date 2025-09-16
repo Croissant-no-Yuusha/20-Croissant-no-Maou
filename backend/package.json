@@ -1,19 +1,25 @@
 {
-  "name": "back",
+  "name": "recipe-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Recipe management backend",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "migrate": "node migrate-to-mongodb.js",
+    "migrate": "node utils/migrate-to-mongodb.js",
     "dev": "nodemon server.js",
     "check": "npx prettier . --check",
     "format": "npx prettier . --write"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "recipe",
+    "backend",
+    "mvc",
+    "express",
+    "mongodb"
+  ],
+  "author": "20-Croissant-no-Maou",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

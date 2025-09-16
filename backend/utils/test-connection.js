@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
-const { connectToMongoDB } = require('./database');
+import dotenv from 'dotenv';
+import { connectToMongoDB } from '../config/database.js';
+
+dotenv.config();
 
 async function testConnection() {
   console.log('🔍 Testing MongoDB connection...');
@@ -12,7 +14,9 @@ async function testConnection() {
   console.log('STORAGE_TYPE:', process.env.STORAGE_TYPE);
 
   try {
-    const connected = await connectToMongoDB();
+    const connected = await connectToMongoDB(
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/recipe_manager'
+    );
     if (connected) {
       console.log('✅ MongoDB connection successful!');
       console.log('📊 You can now use MongoDB storage');

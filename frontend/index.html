@@ -4,11 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📋 AI Recipe Manager</title>
-  <link rel="stylesheet" href="style.css">
+  <title> AI Recipe Manager 📋</title>
+  <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/cooking.png">
 </head>
 <body>
   <!-- Theme Toggle & Language Switcher -->
@@ -30,7 +31,7 @@
     <div class="header">
       <div class="header-content">
         <h1 class="recipe-manager">
-          <img src="photos/book.png" alt="icon" class="icon" loading="lazy">
+          <img src="assets/book.png" alt="icon" class="icon" loading="lazy">
           <span data-translate="title">AI Recipe Manager</span>
         </h1>
         <p class="discover" data-translate="subtitle">Discover delicious recipes with AI assistance</p>
@@ -50,7 +51,7 @@
 
     <div class="card-ai-section">
       <h2 class="section-title">
-        <img src="photos/light-bulb.png" alt="icon" class="icon" loading="lazy">
+        <img src="assets/light-bulb.png" alt="icon" class="icon" loading="lazy">
         <span data-translate="ai_generator">AI Recipe Generator</span>
       </h2>
       <div class="form-group">
@@ -58,7 +59,7 @@
         <input type="text" id="ingredients" data-translate-placeholder="ingredients_placeholder" placeholder="e.g., chicken, tomatoes, onions, garlic" />
       </div>
       <button class="btn btn-primary" id="generateBtn">
-        <img src="photos/gearwithcircle.png" alt="icon" class="icon-btn" loading="lazy">
+        <img src="assets/gearwithcircle.png" alt="icon" class="icon-btn" loading="lazy">
         <span data-translate="generate_recipe">Generate Recipe</span>
       </button>
       
@@ -67,7 +68,7 @@
 
     <div class="add-new-recipe-card">
       <h2 class="section-title">
-        <img src="photos/blue-recipe.png" alt="icon" class="icon" loading="lazy">
+        <img src="assets/blue-recipe.png" alt="icon" class="icon" loading="lazy">
         <span id="formTitle" data-translate="add_new_recipe">Add New Recipe</span>
       </h2>
       <form id="recipeForm">
@@ -88,6 +89,43 @@
           <textarea id="instructions" data-translate-placeholder="instructions_placeholder" placeholder="Enter step-by-step cooking instructions" required></textarea>
         </div>
         
+        <!-- Recipe Metadata Fields -->
+        <div class="form-group">
+          <label for="tags" data-translate="tags">Tags</label>
+          <input type="text" id="tags" data-translate-placeholder="tags_placeholder" placeholder="e.g., dessert, Italian, vegetarian (separate with commas)">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="difficulty" data-translate="difficulty">Difficulty</label>
+            <select id="difficulty">
+              <option value="" data-translate="select_difficulty">Select difficulty (default: Easy)</option>
+              <option value="easy" data-translate="difficulty_easy" selected>Easy</option>
+              <option value="medium" data-translate="difficulty_medium">Medium</option>
+              <option value="hard" data-translate="difficulty_hard">Hard</option>
+            </select>
+            <small class="form-help" data-translate="difficulty_help">💡 Defaults to "Easy" if not selected</small>
+          </div>
+          
+          <div class="form-group form-group-half">
+            <label for="servings" data-translate="servings">Servings</label>
+            <input type="number" id="servings" min="1" max="50" value="1" data-translate-placeholder="servings_placeholder" placeholder="Default: 1 serving">
+            <small class="form-help" data-translate="servings_help">💡 Defaults to 1 serving if not specified</small>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="prepTime" data-translate="prep_time">Prep Time (minutes)</label>
+            <input type="number" id="prepTime" min="0" max="300" data-translate-placeholder="prep_time_placeholder" placeholder="e.g., 15">
+          </div>
+          
+          <div class="form-group form-group-half">
+            <label for="cookTime" data-translate="cook_time">Cook Time (minutes)</label>
+            <input type="number" id="cookTime" min="0" max="600" data-translate-placeholder="cook_time_placeholder" placeholder="e.g., 30">
+          </div>
+        </div>
+        
         <div class="form-group" id="aiStatusGroup" style="display: none;">
           <label class="checkbox-label">
             <input type="checkbox" id="isAiGenerated">
@@ -98,7 +136,7 @@
         
         <div class="form-buttons">
           <button type="submit" class="btn btn-primary" id="saveBtn">
-            <img src="photos/download.png" alt="icon" class="icon-btn" loading="lazy">
+            <img src="assets/download.png" alt="icon" class="icon-btn" loading="lazy">
             <span data-translate="save_recipe">Save Recipe</span>
           </button>
           <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
@@ -110,7 +148,7 @@
 
     <div class="my-recipe-collection-card">
       <h2 class="section-title">
-        <img src="photos/3folders.png" alt="icon" class="icon" loading="lazy">
+        <img src="assets/3folders.png" alt="icon" class="icon" loading="lazy">
         <span data-translate="recipe_collection">My Recipe Collection</span>
       </h2>
       <!-- Search box -->
@@ -152,6 +190,7 @@
   <!-- Translation Files -->
   <script src="translations/en-US.js"></script>
   <script src="translations/th-TH.js"></script>
-  <script src="script.js"></script>
+  <!-- Main modular JavaScript -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

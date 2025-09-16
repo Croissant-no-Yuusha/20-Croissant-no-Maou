@@ -4,14 +4,47 @@ A modern web application for managing your favorite recipes with AI-powered reci
 
 ## ✨ Features
 
-- **Recipe Management**: Create, read, update, and delete recipes
-- **AI Recipe Generation**: Generate recipes using AI (Gemini, OpenAI, Claude)
-- **Smart Search**: Search through recipes by title, ingredients, and tags
-- **Recipe Metadata**: Track difficulty, prep/cook time, servings, and source
-- **Dual Storage**: Support for both JSON files and MongoDB
-- **Modern UI**: Clean and responsive interface
-- **Recipe Tags**: Organize recipes with custom tags
+### Core Features
+- **Recipe Management**: Full CRUD operations for recipes
+- **AI Recipe Generation**: Generate recipes using AI models (Gemini, OpenAI, Claude)
+- **Smart Search**: Advanced search through recipes by title, ingredients, and tags
+- **Recipe Metadata**: Track difficulty level, prep/cook time, servings, and source
 - **AI Badge**: Visual indicators for AI-generated content
+
+### Technical Features
+- **Dual Storage Support**: JSON files for development, MongoDB for production
+- **Modern Architecture**: MVC pattern with service layers
+- **Responsive UI**: Clean and modern interface that works on all devices
+- **Multi-language Support**: Internationalization ready
+- **Theme System**: Customizable UI themes
+- **Real-time Notifications**: User feedback system
+
+## 🏗️ Architecture
+
+### Project Structure
+```
+20-Croissant-no-Maou/
+├── backend/                  # Node.js REST API server
+│   ├── config/              # Database and configuration
+│   ├── controllers/         # Request handlers
+│   ├── models/             # Data models and schemas
+│   ├── routes/             # API endpoint definitions
+│   ├── services/           # Business logic and external APIs
+│   ├── utils/              # Utility functions
+│   └── data/               # JSON storage (development)
+├── frontend/               # Vanilla JavaScript client
+│   ├── assets/            # Images and static resources
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript modules
+│   └── translations/      # Language files
+└── docs/                  # Documentation
+```
+
+### Technology Stack
+- **Backend**: Node.js, Express.js
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3
+- **Database**: JSON files (dev) / MongoDB (prod)
+- **AI Integration**: Google Gemini API
 
 ## 🚀 Quick Start
 
@@ -23,18 +56,24 @@ A modern web application for managing your favorite recipes with AI-powered reci
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Croissant-no-Yuusha/20-Croissant-no-Maou.git
 cd 20-Croissant-no-Maou
 ```
 
-2. Install dependencies:
+2. **Install backend dependencies:**
 ```bash
+cd backend
 npm install
 ```
 
-3. Create a `.env` file in the root directory:
+3. **Create environment configuration:**
+```bash
+cp .env.example .env
+```
+
+4. **Configure your `.env` file:**
 ```env
 # Server Configuration
 PORT=3039
@@ -45,18 +84,32 @@ MODEL=gemini-2.0-flash
 
 # Storage Configuration
 STORAGE_TYPE=json
-RECIPES_FILE_PATH=./recipes.json
+RECIPES_FILE_PATH=./data/recipes.json
 
 # Environment
 NODE_ENV=development
+
+# Database Configuration (for MongoDB migration)
+MONGODB_URI=mongodb://localhost:27017/recipe-manager
+MONGODB_DATABASE=recipe_manager
+MONGODB_COLLECTION=recipes
 ```
 
-4. Start the development server:
+5. **Start the development server:**
 ```bash
 npm start
 ```
 
-5. Open your browser and navigate to `http://localhost:3039`
+6. **Open your browser:**
+Navigate to `http://localhost:3039`
+
+### Development Mode
+
+For backend development with auto-reload:
+```bash
+cd backend
+npm run dev
+```
 
 ## 🔧 Configuration
 
@@ -66,104 +119,177 @@ npm start
 |----------|-------------|----------|---------|
 | `PORT` | Server port | No | 3039 |
 | `API_KEY` | AI API key for recipe generation | Yes* | - |
-| `MODEL` | AI model to use | Yes | gemini-2.0-flash |
-| `STORAGE_TYPE` | Storage backend (`json` or `mongodb`) | Yes | json |
-| `RECIPES_FILE_PATH` | Path for JSON storage | No | ./recipes.json |
+| `MODEL` | AI model to use | No | gemini-2.0-flash |
+| `STORAGE_TYPE` | Storage backend (`json` or `mongodb`) | No | json |
+| `RECIPES_FILE_PATH` | Path for JSON storage | No | ./data/recipes.json |
 | `MONGODB_URI` | MongoDB connection string | No** | - |
 | `MONGODB_DATABASE` | MongoDB database name | No** | recipe_manager |
 | `MONGODB_COLLECTION` | MongoDB collection name | No** | recipes |
+| `NODE_ENV` | Environment mode | No | development |
 
 *Required for AI features  
 **Required when using MongoDB storage
 
-### AI Models Supported
+### Supported AI Models
 
-- **Gemini**: Google's Gemini models
-- **OpenAI**: GPT models (coming soon)
-- **Claude**: Anthropic's Claude models (coming soon)
+- **Gemini**: Google's Gemini models (primary)
+- **OpenAI**: GPT models (planned)
+- **Claude**: Anthropic's Claude models (planned)
 
-## 📱 Usage
+## 📱 Usage Guide
 
-### Creating Recipes
+### Creating Recipes Manually
 
-1. Click the "Add Recipe" button
+1. Click the "Add Recipe" button in the interface
 2. Fill in the recipe details:
-   - Title
-   - Ingredients
-   - Instructions
-   - Tags (optional)
-   - Difficulty level
-   - Prep and cook times
-   - Number of servings
+   - **Title**: Name of your recipe
+   - **Ingredients**: List of required ingredients
+   - **Instructions**: Step-by-step cooking instructions
+   - **Tags**: Categories for organization (optional)
+   - **Difficulty**: Easy, Medium, or Hard
+   - **Prep Time**: Preparation time in minutes
+   - **Cook Time**: Cooking time in minutes
+   - **Servings**: Number of people served
 
 ### AI Recipe Generation
 
-1. Use the AI recipe generation feature
-2. Provide ingredients or recipe ideas
-3. The AI will generate a complete recipe
+1. Access the AI recipe generation feature
+2. Provide input such as:
+   - Available ingredients
+   - Cuisine preferences
+   - Dietary restrictions
+   - Cooking time constraints
+3. The AI will generate a complete recipe with all metadata
 4. AI-generated recipes are marked with a 🤖 badge
+5. Review and edit the generated recipe as needed
 
-### Searching Recipes
+### Managing Recipes
 
-- Use the search bar to find recipes by title, ingredients, or tags
-- Search works across all recipe fields for comprehensive results
+- **Search**: Use the search bar to find recipes by title, ingredients, or tags
+- **Filter**: Filter by difficulty, cooking time, or AI-generated status
+- **Edit**: Click on any recipe to modify its details
+- **Delete**: Remove recipes you no longer need
+- **Export**: Save recipes for sharing or backup
 
-## 🗄️ Database
+## 🗄️ Data Storage
 
-### JSON Storage (Default)
+### Development: JSON Storage
 
-Recipes are stored in a JSON file with the following structure:
+Default storage uses JSON files for easy development:
 
 ```json
 {
   "id": 1,
-  "title": "Recipe Title",
-  "instructions": "Step-by-step instructions",
-  "ingredients": "List of ingredients",
-  "created_at": "2025-09-07T15:08:55.479Z",
-  "updated_at": "2025-09-07T15:08:55.479Z",
+  "title": "Classic Chocolate Chip Cookies",
+  "instructions": "1. Preheat oven to 375°F...",
+  "ingredients": "2 cups flour, 1 cup butter, 3/4 cup sugar...",
+  "created_at": "2025-09-16T10:30:00.000Z",
+  "updated_at": "2025-09-16T10:30:00.000Z",
   "is_ai_generated": false,
   "source": "manual",
-  "tags": ["tag1", "tag2"],
+  "tags": ["dessert", "cookies", "baking"],
   "difficulty": "easy",
   "prep_time": 15,
-  "cook_time": 30,
-  "servings": 4
+  "cook_time": 12,
+  "servings": 24
 }
 ```
 
-### MongoDB Migration
+### Production: MongoDB Migration
 
-To migrate to MongoDB for production use:
+For production deployment with better performance and search capabilities:
 
-1. Install and start MongoDB
-2. Update your `.env` file:
+1. **Install MongoDB:**
+```bash
+# Ubuntu/Debian
+sudo apt-get install mongodb
+
+# macOS
+brew install mongodb-community
+```
+
+2. **Start MongoDB service:**
+```bash
+sudo systemctl start mongod  # Linux
+brew services start mongodb-community  # macOS
+```
+
+3. **Update environment configuration:**
 ```env
+STORAGE_TYPE=mongodb
 MONGODB_URI=mongodb://localhost:27017/recipe-manager
 MONGODB_DATABASE=recipe_manager
 MONGODB_COLLECTION=recipes
-STORAGE_TYPE=mongodb
 ```
-3. Run the migration:
+
+4. **Run the migration:**
 ```bash
+cd backend
 npm run migrate
 ```
+
+The migration will:
+- Create proper database indexes
+- Preserve all existing data
+- Create a backup of JSON files
+- Enable full-text search capabilities
 
 ## 🛠️ Development
 
 ### Available Scripts
 
-- `npm start` - Start the development server
-- `npm run migrate` - Migrate from JSON to MongoDB
-- `npm test` - Run tests (if available)
+**Backend:**
+```bash
+npm start              # Start production server
+npm run dev            # Development with auto-reload
+npm run migrate        # Migrate JSON to MongoDB
+npm run check          # Check code formatting
+npm run format         # Format code with Prettier
+npm test               # Run test suite
+```
 
-### API Endpoints
+**Frontend:**
+- Served statically by the backend server
+- No build process required
+- Direct file editing and refresh
 
-- `GET /recipes` - Get all recipes
-- `POST /recipes` - Create a new recipe
-- `GET /recipes/:id` - Get a specific recipe
-- `PUT /recipes/:id` - Update a recipe
-- `DELETE /recipes/:id` - Delete a recipe
-- `POST /generate-recipe` - Generate recipe with AI
+### API Documentation
+
+**Recipe Endpoints:**
+- `GET /api/recipes` - Retrieve all recipes
+- `GET /api/recipes/:id` - Get specific recipe
+- `POST /api/recipes` - Create new recipe
+- `PUT /api/recipes/:id` - Update existing recipe
+- `DELETE /api/recipes/:id` - Delete recipe
+
+**AI Integration:**
+- `POST /api/ai/generate-recipe` - Generate recipe with AI
+- `POST /api/ai/suggest-improvements` - AI recipe suggestions
+
+## 📚 Documentation
+
+- **Backend API**: See `backend/README.md`
+- **Frontend Guide**: See `frontend/README.md`
+- **Database Schema**: See `DATABASE.md`
+
+## 🔧 Troubleshooting
+
+**Common Issues:**
+
+1. **Port already in use:**
+   ```bash
+   # Change PORT in .env file or kill process
+   lsof -ti:3039 | xargs kill -9
+   ```
+
+2. **AI API not working:**
+   - Verify API_KEY in .env file
+   - Check internet connection
+   - Confirm API quota/billing
+
+3. **MongoDB connection failed:**
+   - Ensure MongoDB is running
+   - Check MONGODB_URI format
+   - Verify database permissions
 
 **Happy Cooking! 👨‍🍳👩‍🍳**
