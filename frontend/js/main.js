@@ -77,12 +77,9 @@ document.getElementById("recipeForm").addEventListener("submit", async (e) => {
 
     // Add metadata fields with defaults
     console.log('Processing tags - raw value:', tags); // Debug log
-    if (tags) {
-      requestBody.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-      console.log('Tags processed:', requestBody.tags); // Debug log
-    } else {
-      console.log('No tags to process - tags variable is empty or falsy'); // Debug log
-    }
+    // Always set tags, even if empty
+    requestBody.tags = tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+    console.log('Tags processed:', requestBody.tags); // Debug log
     
     // Use "easy" as default difficulty if not specified
     requestBody.difficulty = difficulty || 'easy';

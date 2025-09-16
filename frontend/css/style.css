@@ -836,6 +836,40 @@ select option[data-translate*="default"] {
   flex-wrap: wrap;
 }
 
+/* Recipe Tags */
+.recipe-tags {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.recipe-tags strong {
+  color: var(--text-primary);
+  margin-right: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-right: 0.5rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.tag:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 /* Modal Styles */
 .modal {
   position: fixed;
@@ -1251,6 +1285,17 @@ html {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-tags .tag {
+  margin: 0;
 }
 
 .modal-ingredients {

@@ -70,6 +70,7 @@ export const modalManager = {
             ${recipe.difficulty ? `<p><strong>📊 ${translations.difficulty || 'Difficulty'}:</strong> ${recipe.difficulty}</p>` : ''}
             ${recipe.prep_time || recipe.cook_time ? `<p><strong>⏱️ ${translations.time || 'Time'}:</strong> ${recipe.prep_time || 0}min prep, ${recipe.cook_time || 0}min cook</p>` : ''}
             ${recipe.servings ? `<p><strong>👥 ${translations.servings || 'Servings'}:</strong> ${recipe.servings}</p>` : ''}
+            ${recipe.tags && recipe.tags.length > 0 ? `<p><strong>🏷️ ${translations.tags || 'Tags'}:</strong> ${recipe.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}</p>` : ''}
           </div>
         </div>
       </div>
