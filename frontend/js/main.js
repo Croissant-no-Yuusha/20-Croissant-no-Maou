@@ -30,7 +30,25 @@ document.getElementById("recipeForm").addEventListener("submit", async (e) => {
   const instructions = document.getElementById("instructions").value.trim();
   const ingredients = document.getElementById("recipeIngredients").value.trim();
   
-  console.log('Form data:', { id, title: title.substring(0, 20), hasInstructions: !!instructions });
+  // Get metadata fields
+  const tags = document.getElementById("tags").value.trim();
+  const difficulty = document.getElementById("difficulty").value;
+  const servings = document.getElementById("servings").value;
+  const prepTime = document.getElementById("prepTime").value;
+  const cookTime = document.getElementById("cookTime").value;
+  
+  console.log('Form data:', { 
+    id, 
+    title: title.substring(0, 20), 
+    hasInstructions: !!instructions,
+    tags,
+    tagsElement: document.getElementById("tags"),
+    tagsValue: document.getElementById("tags").value,
+    difficulty,
+    servings,
+    prepTime,
+    cookTime
+  });
 
   if (!title || !instructions) {
     const lang = localStorage.getItem('language') || 'en';
@@ -57,6 +75,29 @@ document.getElementById("recipeForm").addEventListener("submit", async (e) => {
       ingredients
     };
 
+    // Add metadata fields with defaults
+    console.log('Processing tags - raw value:', tags); // Debug log
+    if (tags) {
+      requestBody.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      console.log('Tags processed:', requestBody.tags); // Debug log
+    } else {
+      console.log('No tags to process - tags variable is empty or falsy'); // Debug log
+    }
+    
+    // Use "easy" as default difficulty if not specified
+    requestBody.difficulty = difficulty || 'easy';
+    
+    // Use 1 as default servings if not specified or invalid
+    requestBody.servings = (servings && servings > 0) ? parseInt(servings) : 1;
+    
+    if (prepTime && prepTime >= 0) {
+      requestBody.prep_time = parseInt(prepTime);
+    }
+    
+    if (cookTime && cookTime >= 0) {
+      requestBody.cook_time = parseInt(cookTime);
+    }
+
     // Handle AI status for editing
     if (id) {
       // For editing, check if user wants to change AI status
@@ -72,10 +113,21 @@ document.getElementById("recipeForm").addEventListener("submit", async (e) => {
       if (isAiGenerated) {
         requestBody.is_ai_generated = true;
         requestBody.source = 'ai_gemini';
-        requestBody.tags = ['ai-generated'];
+        
+        // Merge user tags with AI-generated tag
+        if (requestBody.tags && requestBody.tags.length > 0) {
+          // Add ai-generated tag if not already present
+          if (!requestBody.tags.includes('ai-generated')) {
+            requestBody.tags.push('ai-generated');
+          }
+        } else {
+          // No user tags, just add ai-generated tag
+          requestBody.tags = ['ai-generated'];
+        }
       }
     }
 
+    console.log('Final request payload:', requestBody); // Debug log
     const result = await saveRecipe(id, requestBody);
 
     // Show success message first
@@ -180,6 +232,10 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
         .split('\n')
         .map(line => {
           const cleanLine = line.replace(/^\s*[-*•]\s*/, '').trim(); // Remove existing bullets
+          // Skip lines that contain time information
+          if (cleanLine.match(/(?:เวลาในการทำอาหาร|เตรียม.*นาที|ปรุง.*นาที|prep time|cook time)/i)) {
+            return '';
+          }
           return cleanLine ? `• ${cleanLine}` : ''; // Add consistent bullet points
         })
         .filter(line => line.length > 0)
@@ -198,10 +254,144 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
         .replace(/\n{2,}/g, '\n'); // clean double newlines
     }
 
+    // --- Extract metadata fields ---
+    let extractedTags = [];
+    let extractedDifficulty = '';
+    let extractedServings = '';
+    let extractedPrepTime = '';
+    let extractedCookTime = '';
+
+    // Extract tags
+    let tagsMatch = suggestion.match(/(?:\*\*Tags:\*\*|Tags:|Categories:)\s*(.+)/i);
+    if (!tagsMatch) {
+      tagsMatch = suggestion.match(/(?:\*\*แท็ก:\*\*|แท็ก:|หมวดหมู่:)\s*(.+)/i);
+    }
+    if (tagsMatch) {
+      extractedTags = tagsMatch[1].split(',').map(tag => tag.trim()).filter(tag => tag);
+    }
+
+    // Extract difficulty
+    let difficultyMatch = suggestion.match(/(?:\*\*Difficulty:\*\*|Difficulty:|Level:)\s*(easy|medium|hard|ง่าย|ปานกลาง|ยาก)/i);
+    if (!difficultyMatch) {
+      difficultyMatch = suggestion.match(/(?:\*\*ระดับความยาก:\*\*|ระดับความยาก:)\s*(easy|medium|hard|ง่าย|ปานกลาง|ยาก)/i);
+    }
+    if (difficultyMatch) {
+      const diff = difficultyMatch[1].toLowerCase();
+      // Map Thai to English
+      if (diff === 'ง่าย') extractedDifficulty = 'easy';
+      else if (diff === 'ปานกลาง') extractedDifficulty = 'medium';
+      else if (diff === 'ยาก') extractedDifficulty = 'hard';
+      else extractedDifficulty = diff;
+    }
+
+    // Extract servings
+    let servingsMatch = suggestion.match(/(?:\*\*Servings:\*\*|Servings?:|Serves?:)\s*(\d+)/i);
+    if (!servingsMatch) {
+      servingsMatch = suggestion.match(/(?:\*\*จำนวนที่ทาน:\*\*|จำนวนที่ทาน:|สำหรับ)\s*(\d+)/i);
+    }
+    if (servingsMatch) {
+      extractedServings = servingsMatch[1];
+    }
+
+    // Extract prep and cook time with improved Thai patterns
+    let prepTimeMatch = suggestion.match(/(?:\*\*Prep Time:\*\*|Prep Time:|Preparation Time:)\s*(\d+)\s*(?:min|minutes?|นาที)/i);
+    let cookTimeMatch = suggestion.match(/(?:\*\*Cook Time:\*\*|Cook Time:|Cooking Time:)\s*(\d+)\s*(?:min|minutes?|นาที)/i);
+    
+    // Thai time patterns - handle complex formats
+    if (!prepTimeMatch || !cookTimeMatch) {
+      // Pattern 1: **เวลาในการทำอาหาร:** 20 นาที (เตรียม 10 นาที, ปรุง 10 นาที)
+      let complexTimeMatch = suggestion.match(/(?:\*\*เวลาในการทำอาหาร:\*\*|เวลาในการทำอาหาร:).*?\(เตรียม\s*(\d+)\s*นาที.*?ปรุง\s*(\d+)\s*นาที\)/i);
+      
+      // Pattern 2: **เวลาในการทำอาหาร:** เตรียม 10 นาที ปรุง 5 นาที
+      if (!complexTimeMatch) {
+        complexTimeMatch = suggestion.match(/(?:\*\*เวลาในการทำอาหาร:\*\*|เวลาในการทำอาหาร:).*?เตรียม\s*(\d+)\s*นาที.*?ปรุง\s*(\d+)\s*นาที/i);
+      }
+      
+      console.log('Thai time pattern match:', complexTimeMatch); // Debug log
+      
+      if (complexTimeMatch) {
+        extractedPrepTime = complexTimeMatch[1];
+        extractedCookTime = complexTimeMatch[2];
+        console.log('Extracted Thai times - Prep:', extractedPrepTime, 'Cook:', extractedCookTime); // Debug log
+      } else {
+        // Fallback to individual patterns
+        if (!prepTimeMatch) {
+          prepTimeMatch = suggestion.match(/(?:\*\*เตรียม:\*\*|เตรียม\s*[:：]?)\s*(\d+)\s*(?:min|minutes?|นาที)/i);
+        }
+        if (!cookTimeMatch) {
+          cookTimeMatch = suggestion.match(/(?:\*\*ปรุง\s*[:：]?\*\*|ปรุง\s*[:：]?)\s*(\d+)\s*(?:min|minutes?|นาที)/i);
+        }
+        
+        if (prepTimeMatch) {
+          extractedPrepTime = prepTimeMatch[1];
+        }
+        if (cookTimeMatch) {
+          extractedCookTime = cookTimeMatch[1];
+        }
+      }
+    } else {
+      if (prepTimeMatch) {
+        extractedPrepTime = prepTimeMatch[1];
+      }
+      if (cookTimeMatch) {
+        extractedCookTime = cookTimeMatch[1];
+      }
+    }
+
+    // --- Clean up metadata information from instructions ---
+    // Remove various metadata patterns that shouldn't be in instructions
+    instructions = instructions
+      .replace(/(?:\*\*เวลาในการทำอาหาร:\*\*|เวลาในการทำอาหาร:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*Prep Time:\*\*|Prep Time:|Preparation Time:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*Cook Time:\*\*|Cook Time:|Cooking Time:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*เตรียม:\*\*|เตรียม\s*[:：]?).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*ปรุง\s*[:：]?\*\*|ปรุง\s*[:：]?).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*Tags:\*\*|Tags:|Categories:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*แท็ก:\*\*|แท็ก:|หมวดหมู่:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*Difficulty:\*\*|Difficulty:|Level:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*ระดับความยาก:\*\*|ระดับความยาก:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*Servings?:\*\*|Servings?:|Serves?:).*?(?:\n|$)/gi, '')
+      .replace(/(?:\*\*จำนวนที่ทาน:\*\*|จำนวนที่ทาน:|สำหรับ).*?(?:\n|$)/gi, '')
+      .replace(/^\s*[\n\r]+/gm, '') // Remove empty lines
+      .replace(/\n{3,}/g, '\n\n') // Limit consecutive newlines to max 2
+      .trim();
+
     // --- Auto-fill Add New Recipe form ---
     document.getElementById("title").value = title;
     document.getElementById("instructions").value = instructions;
     document.getElementById("recipeIngredients").value = parsedIngredients;
+    
+    // Auto-fill metadata fields
+    if (extractedTags.length > 0) {
+      document.getElementById("tags").value = extractedTags.join(', ');
+      console.log('Tags auto-filled:', extractedTags.join(', ')); // Debug log
+    } else {
+      console.log('No tags extracted to auto-fill'); // Debug log
+    }
+    
+    if (extractedDifficulty) {
+      document.getElementById("difficulty").value = extractedDifficulty;
+    }
+    
+    if (extractedServings) {
+      document.getElementById("servings").value = extractedServings;
+    }
+    
+    if (extractedPrepTime) {
+      document.getElementById("prepTime").value = extractedPrepTime;
+    }
+    
+    if (extractedCookTime) {
+      document.getElementById("cookTime").value = extractedCookTime;
+    }
+    
+    // Verify values after auto-fill
+    setTimeout(() => {
+      console.log('Values after auto-fill verification:');
+      console.log('Tags field value:', document.getElementById("tags").value);
+      console.log('Difficulty field value:', document.getElementById("difficulty").value);
+      console.log('Servings field value:', document.getElementById("servings").value);
+    }, 100);
     
     const langForm = localStorage.getItem('language') || 'en';
     const transForm = languageManager.getTranslations(langForm);

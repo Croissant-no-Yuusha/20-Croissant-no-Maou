@@ -433,6 +433,100 @@ textarea {
   line-height: 1.5;
 }
 
+/* Form row layout for side-by-side fields */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.form-group-half {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Number input styling */
+input[type="number"] {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+input[type="number"]:hover {
+  border-color: var(--border-hover);
+}
+
+/* Select dropdown styling */
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6,9 12,15 18,9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Default value styling */
+#difficulty option[selected],
+#servings[value="1"] {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Placeholder styling for default hints */
+input[placeholder*="Default"],
+select option[data-translate*="default"] {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Form help text styling */
+.form-help {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.form-help::before {
+  content: '';
+  margin-right: 0.25rem;
+}
+
+/* Responsive adjustments for form rows */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-group-half {
+    margin-bottom: 1.75rem;
+  }
+  
+  .form-group-half:last-child {
+    margin-bottom: 0;
+  }
+}
+
 /* Checkbox Styles */
 .checkbox-label {
   display: flex !important;

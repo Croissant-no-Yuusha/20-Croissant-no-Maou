@@ -18,6 +18,13 @@ export function resetRecipeForm() {
     document.getElementById("instructions").value = "";
     document.getElementById("recipeIngredients").value = "";
     
+    // Reset metadata fields to defaults
+    document.getElementById("tags").value = "";
+    document.getElementById("difficulty").value = "easy"; // Default to easy
+    document.getElementById("servings").value = "1"; // Default to 1 serving
+    document.getElementById("prepTime").value = "";
+    document.getElementById("cookTime").value = "";
+    
     // Get current language translations
     const lang = localStorage.getItem('language') || 'en';
     const translations = languageManager.getTranslations(lang);
@@ -190,6 +197,13 @@ export async function editRecipe(id) {
     document.getElementById("title").value = recipe.title;
     document.getElementById("instructions").value = recipe.instructions;
     document.getElementById("recipeIngredients").value = recipe.ingredients || "";
+    
+    // Populate metadata fields
+    document.getElementById("tags").value = recipe.tags ? recipe.tags.join(', ') : '';
+    document.getElementById("difficulty").value = recipe.difficulty || '';
+    document.getElementById("servings").value = recipe.servings || '';
+    document.getElementById("prepTime").value = recipe.prep_time || '';
+    document.getElementById("cookTime").value = recipe.cook_time || '';
     
     // Show and set AI status checkbox
     const aiStatusGroup = document.getElementById("aiStatusGroup");

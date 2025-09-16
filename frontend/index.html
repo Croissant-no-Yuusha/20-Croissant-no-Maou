@@ -89,6 +89,43 @@
           <textarea id="instructions" data-translate-placeholder="instructions_placeholder" placeholder="Enter step-by-step cooking instructions" required></textarea>
         </div>
         
+        <!-- Recipe Metadata Fields -->
+        <div class="form-group">
+          <label for="tags" data-translate="tags">Tags</label>
+          <input type="text" id="tags" data-translate-placeholder="tags_placeholder" placeholder="e.g., dessert, Italian, vegetarian (separate with commas)">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="difficulty" data-translate="difficulty">Difficulty</label>
+            <select id="difficulty">
+              <option value="" data-translate="select_difficulty">Select difficulty (default: Easy)</option>
+              <option value="easy" data-translate="difficulty_easy" selected>Easy</option>
+              <option value="medium" data-translate="difficulty_medium">Medium</option>
+              <option value="hard" data-translate="difficulty_hard">Hard</option>
+            </select>
+            <small class="form-help" data-translate="difficulty_help">💡 Defaults to "Easy" if not selected</small>
+          </div>
+          
+          <div class="form-group form-group-half">
+            <label for="servings" data-translate="servings">Servings</label>
+            <input type="number" id="servings" min="1" max="50" value="1" data-translate-placeholder="servings_placeholder" placeholder="Default: 1 serving">
+            <small class="form-help" data-translate="servings_help">💡 Defaults to 1 serving if not specified</small>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="prepTime" data-translate="prep_time">Prep Time (minutes)</label>
+            <input type="number" id="prepTime" min="0" max="300" data-translate-placeholder="prep_time_placeholder" placeholder="e.g., 15">
+          </div>
+          
+          <div class="form-group form-group-half">
+            <label for="cookTime" data-translate="cook_time">Cook Time (minutes)</label>
+            <input type="number" id="cookTime" min="0" max="600" data-translate-placeholder="cook_time_placeholder" placeholder="e.g., 30">
+          </div>
+        </div>
+        
         <div class="form-group" id="aiStatusGroup" style="display: none;">
           <label class="checkbox-label">
             <input type="checkbox" id="isAiGenerated">

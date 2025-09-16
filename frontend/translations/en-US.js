@@ -26,6 +26,24 @@ window.translations_en = {
   ingredients_example: "e.g., 2 cups rice, 1 onion, 3 cloves garlic",
   instructions: "Instructions",
   instructions_placeholder: "Enter step-by-step cooking instructions",
+  
+  // Recipe Metadata
+  tags: "Tags",
+  tags_placeholder: "e.g., dessert, Italian, vegetarian (separate with commas)",
+  difficulty: "Difficulty",
+  select_difficulty: "Select difficulty (default: Easy)",
+  difficulty_easy: "Easy",
+  difficulty_medium: "Medium", 
+  difficulty_hard: "Hard",
+  servings: "Servings",
+  servings_placeholder: "Default: 1 serving",
+  prep_time: "Prep Time (minutes)",
+  prep_time_placeholder: "e.g., 15",
+  cook_time: "Cook Time (minutes)",
+  cook_time_placeholder: "e.g., 30",
+  difficulty_help: "💡 Defaults to \"Easy\" if not selected",
+  servings_help: "💡 Defaults to 1 serving if not specified",
+  
   save_recipe: "Save Recipe",
   saving: "Saving...",
   cancel: "Cancel",
@@ -47,6 +65,8 @@ window.translations_en = {
   created: "Created",
   updated: "Updated",
   recipe_info: "Recipe Information",
+  source: "Source",
+  time: "Time",
   
   // Messages & Notifications
   please_enter_ingredients: "Please enter some ingredients",
